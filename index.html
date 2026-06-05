@@ -28,9 +28,10 @@
     body {
       font-family: 'Noto Sans JP', sans-serif;
       color: var(--text);
-      line-height: 1.85;
+      line-height: 2.0;
       background: var(--bg);
-      font-size: 17px;
+      font-size: 19px;
+      letter-spacing: 0.02em;
       -webkit-font-smoothing: antialiased;
     }
 
@@ -76,7 +77,7 @@
       color: white;
       padding: 10px 22px;
       border-radius: 100px;
-      font-size: 0.88rem;
+      font-size: 0.95rem;
       font-weight: 700;
       white-space: nowrap;
       box-shadow: 0 2px 12px rgba(229,90,43,.3);
@@ -114,7 +115,7 @@
       background: var(--accent-pale);
       border: 1px solid rgba(229,90,43,.2);
       color: var(--accent);
-      font-size: 0.82rem;
+      font-size: 0.9rem;
       font-weight: 700;
       padding: 6px 14px;
       border-radius: 100px;
@@ -156,9 +157,9 @@
       display: inline-block;
       background: linear-gradient(135deg, var(--accent) 0%, #d44520 100%);
       color: white;
-      padding: 18px 48px;
+      padding: 20px 52px;
       border-radius: 100px;
-      font-size: 1.05rem;
+      font-size: 1.1rem;
       font-weight: 700;
       box-shadow: 0 6px 24px rgba(229,90,43,.35);
       transition: all .25s;
@@ -166,7 +167,7 @@
     }
     .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(229,90,43,.45); }
     .cta-note {
-      font-size: 0.82rem;
+      font-size: 0.9rem;
       color: var(--text-sub);
       margin-top: 14px;
     }
@@ -244,8 +245,8 @@
       line-height: 1.2;
     }
     .trust-item .t-label {
-      font-size: 0.78rem;
-      opacity: .8;
+      font-size: 0.88rem;
+      opacity: .85;
       margin-top: 2px;
     }
 
@@ -255,7 +256,7 @@
 
     .section-eyebrow {
       display: inline-block;
-      font-size: 0.75rem;
+      font-size: 0.82rem;
       font-weight: 700;
       letter-spacing: .1em;
       text-transform: uppercase;
@@ -350,9 +351,9 @@
     }
     .ba-side { padding: 24px 28px; }
     .ba-label {
-      font-size: 0.72rem;
+      font-size: 0.84rem;
       font-weight: 700;
-      letter-spacing: .12em;
+      letter-spacing: .1em;
       margin-bottom: 8px;
       display: flex;
       align-items: center;
@@ -368,7 +369,7 @@
     .ba-label.after::before { content: ''; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
     .ba-side.before { background: #fff7f5; }
     .ba-side.after  { background: #f2faf5; }
-    .ba-text { font-size: 0.95rem; line-height: 1.8; color: var(--text); }
+    .ba-text { font-size: 1.0rem; line-height: 1.9; color: var(--text); }
     .ba-arrow {
       display: flex;
       align-items: center;
@@ -412,7 +413,7 @@
       line-height: 1.1;
       display: block;
     }
-    .roi-sub { font-size: 0.85rem; color: var(--text-sub); margin-top: 6px; line-height: 1.6; }
+    .roi-sub { font-size: 0.92rem; color: var(--text-sub); margin-top: 6px; line-height: 1.7; }
     .roi-eq { font-size: 1.6rem; font-weight: 800; color: var(--text-sub); text-align: center; }
     .roi-conclusion {
       background: var(--green);
@@ -540,17 +541,17 @@
       transform: translateX(-50%);
       background: var(--accent);
       color: white;
-      font-size: 0.8rem;
+      font-size: 0.87rem;
       font-weight: 700;
       padding: 5px 18px;
       border-radius: 100px;
       white-space: nowrap;
     }
-    .pricing-name  { font-size: 0.8rem; font-weight: 700; color: var(--text-sub); margin-bottom: 12px; letter-spacing: .1em; }
+    .pricing-name  { font-size: 0.88rem; font-weight: 700; color: var(--text-sub); margin-bottom: 12px; letter-spacing: .1em; }
     .pricing-price { font-size: 2.4rem; font-weight: 900; color: var(--text); margin-bottom: 6px; letter-spacing: -.03em; }
-    .pricing-price span { font-size: 0.9rem; font-weight: 400; color: var(--text-sub); }
-    .pricing-desc  { font-size: 0.88rem; color: var(--text-sub); margin-bottom: 22px; line-height: 1.7; }
-    .pricing-features { list-style: none; font-size: 0.9rem; text-align: left; }
+    .pricing-price span { font-size: 0.95rem; font-weight: 400; color: var(--text-sub); }
+    .pricing-desc  { font-size: 0.94rem; color: var(--text-sub); margin-bottom: 22px; line-height: 1.8; }
+    .pricing-features { list-style: none; font-size: 0.95rem; text-align: left; }
     .pricing-features li {
       padding: 9px 0;
       border-bottom: 1px solid var(--border);
@@ -561,7 +562,7 @@
     }
     .pricing-features li:last-child { border-bottom: none; }
     .pricing-features li::before { content: "✓"; color: var(--green); font-weight: 700; flex-shrink: 0; }
-    .pricing-note { text-align: center; font-size: 0.88rem; color: var(--text-sub); margin-top: 24px; line-height: 1.9; }
+    .pricing-note { text-align: center; font-size: 0.95rem; color: var(--text-sub); margin-top: 24px; line-height: 1.9; }
 
     /* ── FAQ ── */
     .faq-list { display: grid; gap: 8px; max-width: 680px; margin: 0 auto; }
@@ -577,7 +578,7 @@
       padding: 20px 24px;
       font-weight: 600;
       cursor: pointer;
-      font-size: 0.97rem;
+      font-size: 1.0rem;
       list-style: none;
       display: flex;
       justify-content: space-between;
@@ -590,7 +591,7 @@
     details[open] summary::after { content: "－"; }
     .faq-body {
       padding: 14px 24px 22px;
-      font-size: 0.95rem;
+      font-size: 1.0rem;
       color: var(--text-sub);
       line-height: 2.0;
       border-top: 1px solid var(--border);
@@ -632,14 +633,14 @@
       box-shadow: 0 6px 28px rgba(0,0,0,.2);
     }
     .final-cta .cta-btn:hover { background: #f0fdf4; }
-    .final-cta .cta-note { color: rgba(255,255,255,.65); margin-top: 16px; font-size: 0.82rem; }
+    .final-cta .cta-note { color: rgba(255,255,255,.65); margin-top: 16px; font-size: 0.9rem; }
 
     /* ── Footer ── */
     footer { background: #111827; color: #6b7280; text-align: center; padding: 28px 20px; font-size: 0.82rem; }
 
     /* ── Mobile ── */
     @media (max-width: 680px) {
-      body { font-size: 16px; }
+      body { font-size: 18px; }
 
       .hero { padding: 52px 20px 48px; }
       .hero-inner {
@@ -660,7 +661,7 @@
       .beta-invite { padding: 28px 20px; }
       .feature-item { grid-template-columns: 1fr; }
       .trust-strip-inner { gap: 24px; }
-      .compare-table th, .compare-table td { padding: 12px 8px; font-size: 0.8rem; }
+      .compare-table th, .compare-table td { padding: 12px 8px; font-size: 0.88rem; }
     }
   </style>
 </head>
@@ -759,7 +760,7 @@
     <span class="section-eyebrow reveal">HanaFlowの解決</span>
     <h2 class="section-title reveal">「1か所に集める」<br>それだけで、漏れはなくなる</h2>
     <p class="section-lead reveal">
-      花屋・農業・小売の実務経験から逆算して設計しました。<br>
+      花屋の現場を熟知した設計者が、課題を逆算して作りました。<br>
       「かっこいい機能」より「今日の受注が消えない仕組み」を優先しています。
     </p>
     <div class="feature-list">
@@ -820,7 +821,7 @@
       <div class="ba-row reveal">
         <div class="ba-side before">
           <p class="ba-label before">BEFORE</p>
-          <p class="ba-text">母の日の前週、注文が集中して頭がパンク。何件あるかも把握できない。</p>
+          <p class="ba-text">繁忙期の前週、注文が集中して頭がパンク。何件あるかも把握できない。</p>
         </div>
         <div class="ba-arrow">→</div>
         <div class="ba-side after">
@@ -874,8 +875,8 @@
           <tr>
             <th style="text-align:left;">比較項目</th>
             <th class="hana">HanaFlow</th>
-            <th>easy-m</th>
-            <th>GEM CASE</th>
+            <th>花屋特化ツールA</th>
+            <th>花屋特化ツールB</th>
             <th>Excel・紙</th>
           </tr>
         </thead>
@@ -890,8 +891,8 @@
           <tr>
             <td>月額（最安）</td>
             <td class="hana">ベータ：<strong>無料</strong><br><small style="color:#888">→ 9,800円〜</small></td>
-            <td>11,000円〜</td>
-            <td>無料〜<br><small style="color:#aaa">（有料詳細非公開）</small></td>
+            <td>10,000円〜</td>
+            <td>10,000円〜</td>
             <td>0円</td>
           </tr>
           <tr>
@@ -940,7 +941,7 @@
         <div class="founder-avatar">🌸</div>
         <div>
           <p class="founder-name">HanaFlowについて</p>
-          <p class="founder-title">花屋・農業・小売・イベント運営の<br>現場経験者が設計</p>
+          <p class="founder-title">花屋の現場を知る人間が設計</p>
         </div>
       </div>
       <p class="why-us-body">
@@ -1073,7 +1074,7 @@
 <!-- 最終CTA -->
 <div class="final-cta" id="apply">
   <div class="container">
-    <h2>今年の母の日は、<br>漏れゼロで迎えませんか？</h2>
+    <h2>父の日まであと2週間。<br>漏れゼロで迎えませんか？</h2>
     <p>
       無料ベータは5社限定。初期費用ゼロ、いつでも解約できます。<br>
       「ちょっと試してみよう」くらいの気持ちで申し込んでください。<br>
