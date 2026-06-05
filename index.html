@@ -5,362 +5,515 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HanaFlow — 花屋の受注漏れを仕組みで防ぐ</title>
   <meta name="description" content="電話・LINE・紙が混在して受注が漏れる。花屋の現場経験者が設計した受注管理ツール HanaFlow。無料ベータ5社限定。初期費用ゼロ。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-    body {
-      font-family: 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Noto Sans JP', 'Yu Gothic', sans-serif;
-      color: #222;
-      line-height: 1.9;
-      background: #fafaf8;
-      font-size: 18px;
-    }
 
     :root {
-      --green: #2d6e50;
-      --green-light: #4a9e72;
-      --green-pale: #f2f8f5;
-      --accent: #d94f2a;
-      --text: #222;
-      --text-sub: #555;
-      --border: #e0ddd8;
-      --bg: #fafaf8;
-      --white: #fff;
+      --green:       #1a7a45;
+      --green-mid:   #22a05a;
+      --green-light: #e6f7ed;
+      --accent:      #e55a2b;
+      --accent-pale: #fff0eb;
+      --text:        #1a1a2e;
+      --text-sub:    #5c6475;
+      --border:      #e4e7ec;
+      --bg:          #f8f9fb;
+      --white:       #ffffff;
     }
 
-    h1, h2, h3 { line-height: 1.4; }
-    .container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      color: var(--text);
+      line-height: 1.85;
+      background: var(--bg);
+      font-size: 17px;
+      -webkit-font-smoothing: antialiased;
+    }
 
-    /* Nav */
+    h1, h2, h3 { line-height: 1.35; }
+    a { color: inherit; text-decoration: none; }
+    .container { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── Scroll animations ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .65s ease, transform .65s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+    .reveal-delay-1 { transition-delay: .1s; }
+    .reveal-delay-2 { transition-delay: .2s; }
+    .reveal-delay-3 { transition-delay: .3s; }
+
+    /* ── Nav ── */
     nav {
-      background: var(--green);
-      padding: 14px 28px;
       position: sticky;
       top: 0;
       z-index: 100;
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 28px;
+      height: 60px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,.15);
+      justify-content: space-between;
     }
-    .nav-logo { color: white; font-weight: 800; font-size: 1.2rem; letter-spacing: .08em; }
+    .nav-logo {
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: var(--green);
+      letter-spacing: -.01em;
+    }
+    .nav-logo span { color: var(--accent); }
     .nav-cta {
       background: var(--accent);
       color: white;
-      padding: 11px 26px;
-      border-radius: 50px;
-      text-decoration: none;
-      font-size: 0.95rem;
+      padding: 10px 22px;
+      border-radius: 100px;
+      font-size: 0.88rem;
       font-weight: 700;
       white-space: nowrap;
-      box-shadow: 0 2px 8px rgba(217,79,42,.35);
+      box-shadow: 0 2px 12px rgba(229,90,43,.3);
       transition: all .2s;
     }
-    .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(217,79,42,.4); }
+    .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(229,90,43,.4); }
 
-    /* Hero */
+    /* ── Hero ── */
     .hero {
-      background: linear-gradient(150deg, #ddf0e6 0%, #f0f8f4 50%, #fafaf8 100%);
-      padding: 80px 24px 72px;
-      text-align: center;
-      border-bottom: 2px solid #c0ddd0;
+      background: linear-gradient(150deg, #edfaf2 0%, #f8f9fb 55%, #fff 100%);
+      padding: 72px 24px 64px;
+      overflow: hidden;
+      position: relative;
     }
-    .hero-scene {
-      font-size: 1.0rem;
-      color: var(--text-sub);
-      margin: 0 auto 36px;
-      background: white;
-      display: inline-block;
-      padding: 20px 28px;
-      border-left: 5px solid var(--green);
-      border-radius: 0 10px 10px 0;
-      text-align: left;
-      max-width: 560px;
-      line-height: 2.1;
-      box-shadow: 0 3px 14px rgba(0,0,0,.07);
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(34,160,90,.08) 0%, transparent 70%);
+      pointer-events: none;
     }
+    .hero-inner {
+      max-width: 880px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 260px;
+      gap: 48px;
+      align-items: center;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent-pale);
+      border: 1px solid rgba(229,90,43,.2);
+      color: var(--accent);
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 100px;
+      margin-bottom: 20px;
+      letter-spacing: .04em;
+    }
+    .hero-badge::before { content: '●'; font-size: .6rem; animation: pulse 1.5s ease-in-out infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+
     .hero h1 {
-      font-size: clamp(2.0rem, 6vw, 3.0rem);
-      color: var(--green);
-      margin-bottom: 16px;
+      font-size: clamp(2.1rem, 5.5vw, 3.2rem);
       font-weight: 900;
-      letter-spacing: -.01em;
+      color: var(--text);
+      letter-spacing: -.025em;
+      margin-bottom: 20px;
+      line-height: 1.25;
+    }
+    .hero h1 em {
+      font-style: normal;
+      color: var(--green);
+      position: relative;
+    }
+    .hero h1 em::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--green), var(--green-mid));
+      border-radius: 2px;
+      opacity: .4;
     }
     .hero-sub {
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       color: var(--text-sub);
-      margin-bottom: 40px;
+      margin-bottom: 36px;
       line-height: 1.9;
     }
     .cta-btn {
       display: inline-block;
-      background: var(--accent);
+      background: linear-gradient(135deg, var(--accent) 0%, #d44520 100%);
       color: white;
-      padding: 22px 60px;
-      border-radius: 50px;
-      font-size: 1.15rem;
+      padding: 18px 48px;
+      border-radius: 100px;
+      font-size: 1.05rem;
       font-weight: 700;
-      text-decoration: none;
-      box-shadow: 0 4px 20px rgba(217,79,42,.38);
-      transition: all .2s;
+      box-shadow: 0 6px 24px rgba(229,90,43,.35);
+      transition: all .25s;
       letter-spacing: .02em;
     }
-    .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 26px rgba(217,79,42,.48); }
-    .cta-note { font-size: 0.9rem; color: var(--text-sub); margin-top: 16px; }
+    .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(229,90,43,.45); }
+    .cta-note {
+      font-size: 0.82rem;
+      color: var(--text-sub);
+      margin-top: 14px;
+    }
 
-    /* Trust strip */
+    /* phone mockup */
+    .phone-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+    .phone-wrap::before {
+      content: '';
+      position: absolute;
+      inset: -20px;
+      background: radial-gradient(ellipse, rgba(34,160,90,.12) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .phone-frame {
+      width: 220px;
+      background: #1a1a2e;
+      border-radius: 40px;
+      padding: 14px 9px 18px;
+      box-shadow:
+        0 40px 80px rgba(0,0,0,.28),
+        0 0 0 1px rgba(255,255,255,.06),
+        inset 0 0 0 1px rgba(255,255,255,.04);
+      position: relative;
+      z-index: 1;
+    }
+    .phone-notch {
+      width: 80px;
+      height: 22px;
+      background: #1a1a2e;
+      border-radius: 0 0 14px 14px;
+      margin: 0 auto 6px;
+      position: relative;
+      z-index: 2;
+    }
+    .phone-screen {
+      border-radius: 28px;
+      overflow: hidden;
+      background: #f8f9fb;
+    }
+    .phone-screen img {
+      width: 100%;
+      display: block;
+    }
+    .phone-indicator {
+      width: 100px;
+      height: 4px;
+      background: rgba(255,255,255,.2);
+      border-radius: 2px;
+      margin: 12px auto 0;
+    }
+
+    /* ── Trust strip ── */
     .trust-strip {
       background: var(--green);
-      padding: 22px 24px;
+      padding: 20px 24px;
     }
     .trust-strip-inner {
-      max-width: 860px;
+      max-width: 880px;
       margin: 0 auto;
       display: flex;
       justify-content: center;
-      gap: 40px;
+      gap: 48px;
       flex-wrap: wrap;
     }
     .trust-item { color: white; text-align: center; }
     .trust-item .t-num {
-      font-size: 1.45rem;
+      font-size: 1.35rem;
       font-weight: 900;
       display: block;
       line-height: 1.2;
     }
-    .trust-item .t-label { font-size: 0.82rem; opacity: .85; }
-
-    /* Sections */
-    section { padding: 72px 24px; }
-    section:nth-child(even) { background: var(--green-pale); }
-    .section-label {
-      display: inline-block;
-      background: var(--green);
-      color: white;
+    .trust-item .t-label {
       font-size: 0.78rem;
+      opacity: .8;
+      margin-top: 2px;
+    }
+
+    /* ── Sections ── */
+    section { padding: 80px 24px; }
+    section:nth-child(even) { background: var(--white); }
+
+    .section-eyebrow {
+      display: inline-block;
+      font-size: 0.75rem;
       font-weight: 700;
-      padding: 4px 14px;
-      border-radius: 50px;
-      margin-bottom: 16px;
-      letter-spacing: .08em;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 12px;
     }
     .section-title {
-      font-size: clamp(1.5rem, 4.5vw, 2.1rem);
-      font-weight: 800;
-      margin-bottom: 14px;
-      padding-left: 16px;
-      border-left: 6px solid var(--green);
-      line-height: 1.45;
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 900;
+      letter-spacing: -.02em;
+      margin-bottom: 16px;
+      line-height: 1.3;
     }
     .section-lead {
       color: var(--text-sub);
-      margin-bottom: 40px;
       font-size: 1.02rem;
-      line-height: 2.0;
+      line-height: 1.95;
+      margin-bottom: 44px;
+      max-width: 560px;
     }
 
-    /* Pain cards */
+    /* ── Pain cards ── */
     .pain-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 18px;
+      gap: 16px;
     }
     .pain-card {
       background: white;
       border: 1px solid var(--border);
-      border-radius: 14px;
+      border-radius: 16px;
       padding: 28px 24px;
-      border-left: 6px solid var(--accent);
-      box-shadow: 0 2px 12px rgba(0,0,0,.06);
+      box-shadow: 0 2px 16px rgba(0,0,0,.05);
+      position: relative;
+      overflow: hidden;
+      transition: transform .2s, box-shadow .2s;
     }
-    .pain-card .icon { font-size: 2.0rem; margin-bottom: 12px; }
-    .pain-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 10px; }
-    .pain-card p { font-size: 0.95rem; color: var(--text-sub); line-height: 1.85; }
+    .pain-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--accent);
+    }
+    .pain-card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,.09); }
+    .pain-icon { font-size: 2rem; margin-bottom: 14px; }
+    .pain-card h3 { font-size: 1.02rem; font-weight: 700; margin-bottom: 10px; color: var(--text); }
+    .pain-card p { font-size: 0.93rem; color: var(--text-sub); line-height: 1.8; }
 
-    /* Features */
-    .feature-list { display: grid; gap: 20px; }
+    /* ── Features ── */
+    .feature-list { display: grid; gap: 16px; }
     .feature-item {
-      display: grid;
-      grid-template-columns: 60px 1fr;
-      gap: 24px;
-      align-items: start;
       background: white;
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 28px;
-      box-shadow: 0 2px 10px rgba(0,0,0,.04);
+      border-radius: 16px;
+      padding: 28px 32px;
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 24px;
+      align-items: start;
+      box-shadow: 0 2px 12px rgba(0,0,0,.04);
+      transition: border-color .2s;
     }
+    .feature-item:hover { border-color: var(--green-mid); }
     .feature-num {
-      width: 56px;
-      height: 56px;
-      background: var(--green);
-      color: white;
-      border-radius: 50%;
+      width: 52px;
+      height: 52px;
+      background: var(--green-light);
+      color: var(--green);
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 800;
-      font-size: 1.2rem;
+      font-weight: 900;
+      font-size: 1.25rem;
       flex-shrink: 0;
     }
-    .feature-item h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
-    .feature-item p { font-size: 0.97rem; color: var(--text-sub); line-height: 1.9; }
+    .feature-item h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
+    .feature-item p { font-size: 0.95rem; color: var(--text-sub); line-height: 1.85; }
 
-    /* Before / After */
-    .ba-grid { display: grid; gap: 24px; }
+    /* ── Before / After ── */
+    .ba-grid { display: grid; gap: 20px; }
     .ba-row {
-      display: grid;
-      grid-template-columns: 1fr 52px 1fr;
-      gap: 16px;
-      align-items: center;
       background: white;
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 28px;
-      box-shadow: 0 2px 10px rgba(0,0,0,.05);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,.04);
+      display: grid;
+      grid-template-columns: 1fr 44px 1fr;
+      align-items: center;
     }
+    .ba-side { padding: 24px 28px; }
     .ba-label {
-      font-size: 0.78rem;
+      font-size: 0.72rem;
       font-weight: 700;
       letter-spacing: .12em;
       margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
-    .ba-label.before { color: var(--accent); }
-    .ba-label.after  { color: var(--green); }
-    .ba-text { font-size: 1.0rem; line-height: 1.85; }
-    .ba-arrow { font-size: 1.6rem; color: var(--green); font-weight: 700; text-align: center; }
+    .ba-label.before {
+      color: var(--accent);
+    }
+    .ba-label.before::before { content: ''; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+    .ba-label.after {
+      color: var(--green);
+    }
+    .ba-label.after::before { content: ''; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+    .ba-side.before { background: #fff7f5; }
+    .ba-side.after  { background: #f2faf5; }
+    .ba-text { font-size: 0.95rem; line-height: 1.8; color: var(--text); }
+    .ba-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: var(--text-sub);
+    }
 
-    /* ROI section */
+    /* ── ROI ── */
     .roi-box {
       background: white;
-      border-radius: 16px;
-      padding: 40px 36px;
-      border: 2px solid var(--green);
-      box-shadow: 0 4px 20px rgba(45,110,80,.12);
+      border-radius: 20px;
+      padding: 44px 40px;
+      border: 2px solid var(--green-light);
+      box-shadow: 0 8px 32px rgba(26,122,69,.08);
     }
     .roi-title {
-      font-size: 1.2rem;
-      font-weight: 800;
-      color: var(--green);
-      margin-bottom: 28px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 32px;
       text-align: center;
     }
     .roi-grid {
       display: grid;
-      grid-template-columns: 1fr 52px 1fr;
-      gap: 20px;
+      grid-template-columns: 1fr 40px 1fr;
+      gap: 16px;
       align-items: center;
       margin-bottom: 28px;
     }
     .roi-item {
-      background: var(--green-pale);
-      border-radius: 12px;
-      padding: 22px 20px;
+      background: var(--green-light);
+      border-radius: 14px;
+      padding: 24px 20px;
       text-align: center;
     }
     .roi-num {
-      font-size: 1.9rem;
+      font-size: 2rem;
       font-weight: 900;
       color: var(--accent);
-      line-height: 1.2;
+      line-height: 1.1;
       display: block;
     }
-    .roi-sub { font-size: 0.88rem; color: var(--text-sub); margin-top: 6px; line-height: 1.6; }
-    .roi-eq { font-size: 1.8rem; font-weight: 800; color: var(--green); text-align: center; }
+    .roi-sub { font-size: 0.85rem; color: var(--text-sub); margin-top: 6px; line-height: 1.6; }
+    .roi-eq { font-size: 1.6rem; font-weight: 800; color: var(--text-sub); text-align: center; }
     .roi-conclusion {
       background: var(--green);
       color: white;
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 22px 28px;
       text-align: center;
-      font-size: 1.05rem;
+      font-size: 1.02rem;
       font-weight: 700;
       line-height: 1.75;
     }
 
-    /* Compare */
-    .compare-wrap { overflow-x: auto; }
-    .compare-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; min-width: 560px; }
+    /* ── Compare ── */
+    .compare-wrap { overflow-x: auto; border-radius: 16px; box-shadow: 0 2px 16px rgba(0,0,0,.06); }
+    .compare-table { width: 100%; border-collapse: collapse; font-size: 0.93rem; min-width: 560px; background: white; }
     .compare-table th,
-    .compare-table td { padding: 16px 18px; border: 1px solid var(--border); text-align: center; }
-    .compare-table thead th { background: var(--green); color: white; font-weight: 700; font-size: 0.97rem; }
-    .compare-table tbody tr:nth-child(odd)  { background: white; }
-    .compare-table tbody tr:nth-child(even) { background: var(--green-pale); }
-    .compare-table td:first-child { text-align: left; font-weight: 600; font-size: 0.93rem; }
+    .compare-table td { padding: 15px 18px; border-bottom: 1px solid var(--border); text-align: center; }
+    .compare-table thead th { background: var(--text); color: white; font-weight: 700; font-size: 0.9rem; }
+    .compare-table thead th:first-child { border-radius: 16px 0 0 0; }
+    .compare-table thead th:last-child  { border-radius: 0 16px 0 0; }
+    .compare-table tbody tr:last-child td { border-bottom: none; }
+    .compare-table tbody tr:hover { background: var(--bg); }
+    .compare-table td:first-child { text-align: left; font-weight: 600; font-size: 0.9rem; color: var(--text-sub); }
     .hana  { font-weight: 700; color: var(--green); }
     .check { color: var(--green); font-weight: 700; }
     .cross { color: #ccc; }
-    .delta { color: #999; }
+    .delta { color: #aaa; }
+    th.hana { background: rgba(26,122,69,.12) !important; color: var(--green) !important; }
 
-    /* Why Us / Founder */
+    /* ── Why Us ── */
     .why-us-box {
       background: white;
-      border-radius: 16px;
-      padding: 36px;
+      border-radius: 20px;
+      padding: 40px;
       border: 1px solid var(--border);
-      box-shadow: 0 4px 20px rgba(0,0,0,.07);
+      box-shadow: 0 4px 24px rgba(0,0,0,.06);
     }
     .why-us-header {
       display: grid;
-      grid-template-columns: 80px 1fr;
-      gap: 24px;
+      grid-template-columns: 72px 1fr;
+      gap: 20px;
       align-items: center;
       margin-bottom: 24px;
       padding-bottom: 24px;
-      border-bottom: 2px solid var(--green-pale);
+      border-bottom: 1px solid var(--border);
     }
     .founder-avatar {
-      width: 80px;
-      height: 80px;
-      background: linear-gradient(135deg, var(--green), var(--green-light));
+      width: 72px;
+      height: 72px;
+      background: linear-gradient(135deg, var(--green), var(--green-mid));
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
-      font-size: 2.2rem;
+      font-size: 2rem;
       flex-shrink: 0;
     }
-    .founder-name  { font-size: 1.05rem; font-weight: 700; color: var(--green); margin-bottom: 6px; }
-    .founder-title { font-size: 0.9rem; color: var(--text-sub); line-height: 1.6; }
-    .why-us-body   { font-size: 1.0rem; color: var(--text-sub); line-height: 2.0; }
+    .founder-name  { font-size: 1rem; font-weight: 700; color: var(--green); margin-bottom: 4px; }
+    .founder-title { font-size: 0.88rem; color: var(--text-sub); line-height: 1.6; }
+    .why-us-body   { font-size: 0.97rem; color: var(--text-sub); line-height: 2.0; margin-bottom: 24px; }
     .why-us-body strong { color: var(--text); }
-    .why-us-reasons { display: grid; gap: 14px; margin-top: 24px; }
+    .why-reasons { display: grid; gap: 12px; }
     .why-reason {
       display: flex;
       gap: 16px;
       align-items: flex-start;
       padding: 18px 20px;
-      background: var(--green-pale);
-      border-radius: 10px;
+      background: var(--bg);
+      border-radius: 12px;
+      border: 1px solid var(--border);
     }
-    .why-reason-icon { font-size: 1.5rem; flex-shrink: 0; }
-    .why-reason-text { font-size: 0.97rem; line-height: 1.85; }
-    .why-reason-text strong { color: var(--green); display: block; margin-bottom: 2px; font-size: 1.02rem; }
+    .why-reason-icon { font-size: 1.4rem; flex-shrink: 0; }
+    .why-reason-text { font-size: 0.94rem; line-height: 1.8; }
+    .why-reason-text strong { color: var(--green); display: block; margin-bottom: 2px; font-size: 0.98rem; }
 
-    /* Beta invite box */
+    /* ── Beta invite ── */
     .beta-invite {
-      margin-top: 40px;
-      background: white;
-      border: 2px dashed var(--green);
-      border-radius: 14px;
-      padding: 36px 28px;
+      margin-top: 36px;
+      background: linear-gradient(135deg, var(--green-light) 0%, #fff 100%);
+      border: 2px solid rgba(26,122,69,.2);
+      border-radius: 20px;
+      padding: 40px 32px;
       text-align: center;
     }
     .beta-invite p.bi-title {
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       font-weight: 700;
       color: var(--green);
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
     .beta-invite p.bi-body {
-      font-size: 1.0rem;
+      font-size: 0.97rem;
       color: var(--text-sub);
       line-height: 1.95;
       margin-bottom: 28px;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
-    /* Pricing */
+    /* ── Pricing ── */
     .pricing-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -368,53 +521,63 @@
     }
     .pricing-card {
       background: white;
-      border: 2px solid var(--border);
-      border-radius: 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
       padding: 32px 26px;
       text-align: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,.04);
+      box-shadow: 0 2px 12px rgba(0,0,0,.04);
+      transition: border-color .2s, box-shadow .2s;
     }
+    .pricing-card:hover { border-color: var(--green-mid); box-shadow: 0 8px 28px rgba(0,0,0,.08); }
     .pricing-card.featured {
       border-color: var(--accent);
       position: relative;
-      box-shadow: 0 6px 24px rgba(217,79,42,.18);
+      box-shadow: 0 8px 32px rgba(229,90,43,.15);
     }
     .pricing-badge {
       position: absolute;
-      top: -14px;
-      left: 50%;
+      top: -14px; left: 50%;
       transform: translateX(-50%);
       background: var(--accent);
       color: white;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       font-weight: 700;
-      padding: 5px 20px;
-      border-radius: 50px;
+      padding: 5px 18px;
+      border-radius: 100px;
       white-space: nowrap;
     }
-    .pricing-name  { font-size: 0.85rem; font-weight: 700; color: var(--text-sub); margin-bottom: 12px; letter-spacing: .08em; }
-    .pricing-price { font-size: 2.2rem; font-weight: 900; color: var(--text); margin-bottom: 6px; }
-    .pricing-price span { font-size: 0.95rem; font-weight: 400; color: var(--text-sub); }
-    .pricing-desc  { font-size: 0.9rem; color: var(--text-sub); margin-bottom: 22px; line-height: 1.7; }
-    .pricing-features { list-style: none; font-size: 0.93rem; text-align: left; }
-    .pricing-features li { padding: 8px 0; border-bottom: 1px solid var(--border); color: var(--text-sub); }
-    .pricing-features li:last-child { border-bottom: none; }
-    .pricing-features li::before { content: "✓ "; color: var(--green); font-weight: 700; }
-    .pricing-note { text-align: center; font-size: 0.9rem; color: var(--text-sub); margin-top: 22px; line-height: 1.9; }
-
-    /* FAQ */
-    .faq-list { display: grid; gap: 10px; }
-    details {
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: white;
-      box-shadow: 0 1px 6px rgba(0,0,0,.05);
+    .pricing-name  { font-size: 0.8rem; font-weight: 700; color: var(--text-sub); margin-bottom: 12px; letter-spacing: .1em; }
+    .pricing-price { font-size: 2.4rem; font-weight: 900; color: var(--text); margin-bottom: 6px; letter-spacing: -.03em; }
+    .pricing-price span { font-size: 0.9rem; font-weight: 400; color: var(--text-sub); }
+    .pricing-desc  { font-size: 0.88rem; color: var(--text-sub); margin-bottom: 22px; line-height: 1.7; }
+    .pricing-features { list-style: none; font-size: 0.9rem; text-align: left; }
+    .pricing-features li {
+      padding: 9px 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-sub);
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
+    .pricing-features li:last-child { border-bottom: none; }
+    .pricing-features li::before { content: "✓"; color: var(--green); font-weight: 700; flex-shrink: 0; }
+    .pricing-note { text-align: center; font-size: 0.88rem; color: var(--text-sub); margin-top: 24px; line-height: 1.9; }
+
+    /* ── FAQ ── */
+    .faq-list { display: grid; gap: 8px; max-width: 680px; margin: 0 auto; }
+    details {
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      background: white;
+      overflow: hidden;
+      transition: border-color .2s;
+    }
+    details[open] { border-color: var(--green); }
     details summary {
       padding: 20px 24px;
       font-weight: 600;
       cursor: pointer;
-      font-size: 1.0rem;
+      font-size: 0.97rem;
       list-style: none;
       display: flex;
       justify-content: space-between;
@@ -422,54 +585,82 @@
       gap: 12px;
     }
     details summary::-webkit-details-marker { display: none; }
-    details summary::before { content: "Q. "; color: var(--green); font-weight: 800; flex-shrink: 0; }
-    details summary::after  { content: "＋"; color: var(--green); font-size: 1.2rem; font-weight: 700; flex-shrink: 0; }
+    details summary::before { content: "Q. "; color: var(--green); font-weight: 900; flex-shrink: 0; }
+    details summary::after  { content: "＋"; color: var(--green); font-size: 1.1rem; font-weight: 700; flex-shrink: 0; }
     details[open] summary::after { content: "－"; }
-    details[open] { border-color: var(--green); }
     .faq-body {
-      padding: 16px 24px 22px;
-      font-size: 0.97rem;
+      padding: 14px 24px 22px;
+      font-size: 0.95rem;
       color: var(--text-sub);
       line-height: 2.0;
       border-top: 1px solid var(--border);
     }
 
-    /* Final CTA */
+    /* ── Final CTA ── */
     .final-cta {
-      background: linear-gradient(135deg, #1e5038 0%, var(--green) 100%);
+      background: linear-gradient(150deg, #0d5c30 0%, #1a7a45 60%, #22a05a 100%);
       color: white;
       text-align: center;
-      padding: 88px 24px;
+      padding: 96px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .final-cta::before {
+      content: '';
+      position: absolute;
+      top: -120px; right: -120px;
+      width: 480px; height: 480px;
+      background: radial-gradient(circle, rgba(255,255,255,.07) 0%, transparent 70%);
     }
     .final-cta h2 {
-      font-size: clamp(1.5rem, 4.5vw, 2.2rem);
-      font-weight: 800;
-      margin-bottom: 16px;
-      line-height: 1.55;
+      font-size: clamp(1.7rem, 4.5vw, 2.4rem);
+      font-weight: 900;
+      margin-bottom: 14px;
+      letter-spacing: -.02em;
+      position: relative;
     }
-    .final-cta p { font-size: 1.05rem; opacity: .9; margin-bottom: 40px; line-height: 2.0; }
-    .final-cta .cta-btn { background: white; color: var(--green); box-shadow: 0 4px 20px rgba(0,0,0,.22); }
-    .final-cta .cta-note { color: rgba(255,255,255,.72); margin-top: 16px; }
+    .final-cta p {
+      font-size: 1.0rem;
+      opacity: .88;
+      margin-bottom: 40px;
+      line-height: 2.0;
+      position: relative;
+    }
+    .final-cta .cta-btn {
+      background: white;
+      color: var(--green);
+      box-shadow: 0 6px 28px rgba(0,0,0,.2);
+    }
+    .final-cta .cta-btn:hover { background: #f0fdf4; }
+    .final-cta .cta-note { color: rgba(255,255,255,.65); margin-top: 16px; font-size: 0.82rem; }
 
-    /* Footer */
-    footer { background: #1a1a1a; color: #888; text-align: center; padding: 28px 20px; font-size: 0.85rem; }
+    /* ── Footer ── */
+    footer { background: #111827; color: #6b7280; text-align: center; padding: 28px 20px; font-size: 0.82rem; }
 
-    /* Mobile */
-    @media (max-width: 620px) {
-      body { font-size: 17px; }
-      .feature-item { grid-template-columns: 1fr; }
-      .feature-num  { width: 48px; height: 48px; font-size: 1.1rem; }
-      .why-us-header { grid-template-columns: 1fr; text-align: center; }
+    /* ── Mobile ── */
+    @media (max-width: 680px) {
+      body { font-size: 16px; }
+
+      .hero { padding: 52px 20px 48px; }
+      .hero-inner {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+      .phone-wrap { order: -1; }
+      .phone-frame { width: 200px; }
+
       .ba-row { grid-template-columns: 1fr; }
       .ba-arrow { display: none; }
       .roi-grid { grid-template-columns: 1fr; }
       .roi-eq { display: none; }
-      .compare-table th, .compare-table td { padding: 12px 8px; font-size: 0.82rem; }
-      .cta-btn { padding: 20px 36px; font-size: 1.1rem; }
-      .trust-strip-inner { gap: 24px; }
-      .hero { padding: 60px 20px 56px; }
-      .why-us-box { padding: 24px 20px; }
+
+      .why-us-header { grid-template-columns: 1fr; text-align: center; }
+      .why-us-box { padding: 24px 18px; }
       .roi-box { padding: 28px 20px; }
+      .beta-invite { padding: 28px 20px; }
+      .feature-item { grid-template-columns: 1fr; }
+      .trust-strip-inner { gap: 24px; }
+      .compare-table th, .compare-table td { padding: 12px 8px; font-size: 0.8rem; }
     }
   </style>
 </head>
@@ -477,24 +668,37 @@
 
 <!-- ナビ -->
 <nav>
-  <span class="nav-logo">HanaFlow</span>
+  <span class="nav-logo">Hana<span>Flow</span></span>
   <a href="https://forms.gle/MMvSghpeCheXirDs7" class="nav-cta">無料ベータ（残り5社）</a>
 </nav>
 
 <!-- ヒーロー -->
 <div class="hero">
-  <div class="container">
-    <p class="hero-scene">
-      母の日の前週。店は繁忙期の真っ只中だ。<br>
-      電話が鳴る。LINEも来る。紙の注文票が積み上がる。<br>
-      <br>
-      木曜日の朝、電話がかかってくる。<br>
-      <strong>「配達、まだですか？」</strong>
-    </p>
-    <h1>受注漏れ、今年こそ<br>仕組みで終わりにする</h1>
-    <p class="hero-sub">花屋の現場経験者が設計した受注管理ツール<br>電話・LINE・紙の注文が、スマホ1台に全部並ぶ</p>
-    <a href="https://forms.gle/MMvSghpeCheXirDs7" class="cta-btn">無料ベータに申し込む（残り5社）</a>
-    <p class="cta-note">初期費用0円 ／ クレカ登録なし ／ いつでも停止OK ／ 所要1分</p>
+  <div class="hero-inner">
+
+    <!-- Left: copy -->
+    <div>
+      <div class="hero-badge">5社限定ベータ募集中</div>
+      <h1>受注漏れ、<br>今年こそ<em>仕組み</em>で<br>終わりにする</h1>
+      <p class="hero-sub">
+        花屋の現場経験者が設計した受注管理ツール。<br>
+        電話・LINE・紙の注文が、スマホ1台に全部並ぶ。
+      </p>
+      <a href="https://forms.gle/MMvSghpeCheXirDs7" class="cta-btn">無料ベータに申し込む</a>
+      <p class="cta-note">初期費用0円 ／ クレカ登録なし ／ いつでも停止OK ／ 所要1分</p>
+    </div>
+
+    <!-- Right: phone mockup -->
+    <div class="phone-wrap">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <img src="screenshots/orders_ui.png" alt="HanaFlow 受注一覧画面">
+        </div>
+        <div class="phone-indicator"></div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -523,25 +727,25 @@
 <!-- 課題 -->
 <section id="pain">
   <div class="container">
-    <p class="section-label">現場のリアル</p>
-    <h2 class="section-title">こんな状況、ありませんか？</h2>
-    <p class="section-lead">
+    <span class="section-eyebrow reveal">現場のリアル</span>
+    <h2 class="section-title reveal">こんな状況、<br>ありませんか？</h2>
+    <p class="section-lead reveal">
       花屋の受注漏れは「うっかり」ではありません。<br>
       受け口が増えるほど、管理場所も増える。これは仕組みの問題です。
     </p>
     <div class="pain-grid">
-      <div class="pain-card">
-        <div class="icon">📱</div>
+      <div class="pain-card reveal reveal-delay-1">
+        <div class="pain-icon">📱</div>
         <h3>電話・LINE・紙がバラバラ</h3>
         <p>確認する場所が3か所以上ある。繁忙期に注意が分散して、どこかで必ず漏れる。</p>
       </div>
-      <div class="pain-card">
-        <div class="icon">🚐</div>
+      <div class="pain-card reveal reveal-delay-2">
+        <div class="pain-icon">🚐</div>
         <h3>配達情報が担当者の頭の中だけ</h3>
         <p>「あの配達、誰が行くの？」がLINEや口頭で回る。担当が休んだら情報が止まる。</p>
       </div>
-      <div class="pain-card">
-        <div class="icon">📁</div>
+      <div class="pain-card reveal reveal-delay-3">
+        <div class="pain-icon">📁</div>
         <h3>顧客情報がExcelに眠っている</h3>
         <p>去年の母の日に何を頼んだか、すぐ出てこない。リピートの声かけが後手に回る。</p>
       </div>
@@ -552,28 +756,28 @@
 <!-- 解決策 -->
 <section id="solution">
   <div class="container">
-    <p class="section-label">HanaFlowの解決</p>
-    <h2 class="section-title">「1か所に集める」<br>それだけで、漏れはなくなる</h2>
-    <p class="section-lead">
+    <span class="section-eyebrow reveal">HanaFlowの解決</span>
+    <h2 class="section-title reveal">「1か所に集める」<br>それだけで、漏れはなくなる</h2>
+    <p class="section-lead reveal">
       花屋・農業・小売の実務経験から逆算して設計しました。<br>
       「かっこいい機能」より「今日の受注が消えない仕組み」を優先しています。
     </p>
     <div class="feature-list">
-      <div class="feature-item">
+      <div class="feature-item reveal">
         <div class="feature-num">1</div>
         <div>
           <h3>受注を即登録・即確認</h3>
           <p>電話を切りながらスマホで登録。紙に書いて後でまとめて入力する二度手間をなくす。全注文が1画面に並ぶので「あの注文どこだっけ」がなくなる。</p>
         </div>
       </div>
-      <div class="feature-item">
+      <div class="feature-item reveal">
         <div class="feature-num">2</div>
         <div>
           <h3>納品日で絞り込み、前日確認が30秒で終わる</h3>
           <p>「明日の配達、何件？」が画面を開いて3秒で分かる。担当者が休んでも、誰でも同じ情報を見られる。属人化が消える。</p>
         </div>
       </div>
-      <div class="feature-item">
+      <div class="feature-item reveal">
         <div class="feature-num">3</div>
         <div>
           <h3>顧客履歴がすぐ出てくる</h3>
@@ -587,39 +791,39 @@
 <!-- ベネフィット -->
 <section id="benefit">
   <div class="container">
-    <p class="section-label">あなたの店の変化</p>
-    <h2 class="section-title">「受注が消えない」と<br>何が変わるか</h2>
-    <p class="section-lead">機能の話はここまで。あなたの店が具体的にどう変わるかだけ書きます。</p>
+    <span class="section-eyebrow reveal">あなたの店の変化</span>
+    <h2 class="section-title reveal">「受注が消えない」と<br>何が変わるか</h2>
+    <p class="section-lead reveal">機能の話はここまで。あなたの店が具体的にどう変わるかだけ書きます。</p>
     <div class="ba-grid">
-      <div class="ba-row">
-        <div>
+      <div class="ba-row reveal">
+        <div class="ba-side before">
           <p class="ba-label before">BEFORE</p>
-          <p class="ba-text" style="color:var(--text-sub);">配達漏れが翌朝に発覚。「配達まだですか？」の電話でその日が始まる。</p>
+          <p class="ba-text">配達漏れが翌朝に発覚。「配達まだですか？」の電話でその日が始まる。</p>
         </div>
         <div class="ba-arrow">→</div>
-        <div>
+        <div class="ba-side after">
           <p class="ba-label after">AFTER</p>
           <p class="ba-text">前日に「明日ぶん」を一覧確認。漏れがゼロになる。</p>
         </div>
       </div>
-      <div class="ba-row">
-        <div>
+      <div class="ba-row reveal">
+        <div class="ba-side before">
           <p class="ba-label before">BEFORE</p>
-          <p class="ba-text" style="color:var(--text-sub);">「去年と同じで」と言われても、去年の注文がExcelのどこにあるか探せない。</p>
+          <p class="ba-text">「去年と同じで」と言われても、去年の注文がExcelのどこにあるか探せない。</p>
         </div>
         <div class="ba-arrow">→</div>
-        <div>
+        <div class="ba-side after">
           <p class="ba-label after">AFTER</p>
           <p class="ba-text">名前で検索すれば前回の注文・金額が3秒で出る。提案の質が上がる。</p>
         </div>
       </div>
-      <div class="ba-row">
-        <div>
+      <div class="ba-row reveal">
+        <div class="ba-side before">
           <p class="ba-label before">BEFORE</p>
-          <p class="ba-text" style="color:var(--text-sub);">母の日の前週、注文が集中して頭がパンク。何件あるかも把握できない。</p>
+          <p class="ba-text">母の日の前週、注文が集中して頭がパンク。何件あるかも把握できない。</p>
         </div>
         <div class="ba-arrow">→</div>
-        <div>
+        <div class="ba-side after">
           <p class="ba-label after">AFTER</p>
           <p class="ba-text">全注文が1画面。受注集中日でも、落ち着いて1件ずつ確認できる。</p>
         </div>
@@ -628,13 +832,13 @@
   </div>
 </section>
 
-<!-- ROI / コスト根拠 -->
+<!-- ROI -->
 <section id="roi">
   <div class="container">
-    <p class="section-label">コストの根拠</p>
-    <h2 class="section-title">月額9,800円が<br>回収できる理由</h2>
-    <p class="section-lead">数字で考えてみてください。</p>
-    <div class="roi-box">
+    <span class="section-eyebrow reveal">コストの根拠</span>
+    <h2 class="section-title reveal">月額9,800円が<br>回収できる理由</h2>
+    <p class="section-lead reveal">数字で考えてみてください。</p>
+    <div class="roi-box reveal">
       <p class="roi-title">受注漏れ1件の損失 vs HanaFlowの月額</p>
       <div class="roi-grid">
         <div class="roi-item">
@@ -649,22 +853,22 @@
       </div>
       <div class="roi-conclusion">
         受注漏れを月2件防ぐだけで、HanaFlowの月額（9,800円）は回収できます。<br>
-        <span style="font-size:.9rem;opacity:.88;font-weight:400;">＊ 「クレームへの対応時間」「信頼の損失」は含んでいません</span>
+        <span style="font-size:.88rem;opacity:.8;font-weight:400;">＊「クレームへの対応時間」「信頼の損失」は含んでいません</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- 競合比較 -->
+<!-- 比較表 -->
 <section id="compare">
   <div class="container">
-    <p class="section-label">他ツールとの違い</p>
-    <h2 class="section-title">既存ツールが刺さらない理由</h2>
-    <p class="section-lead">
+    <span class="section-eyebrow reveal">他ツールとの違い</span>
+    <h2 class="section-title reveal">既存ツールが刺さらない理由</h2>
+    <p class="section-lead reveal">
       既存ツールは「高すぎる」か「花屋に刺さらない」かの二択でした。<br>
       HanaFlowは現場の課題から逆算して、余計な機能を削っています。
     </p>
-    <div class="compare-wrap">
+    <div class="compare-wrap reveal">
       <table class="compare-table">
         <thead>
           <tr>
@@ -685,9 +889,9 @@
           </tr>
           <tr>
             <td>月額（最安）</td>
-            <td class="hana">ベータ：無料<br><small style="color:#777">→ 9,800円〜</small></td>
-            <td>11,000円〜<br><small style="color:#777">（税込）</small></td>
-            <td>無料〜<br><small style="color:#777">（有料詳細非公開）</small></td>
+            <td class="hana">ベータ：<strong>無料</strong><br><small style="color:#888">→ 9,800円〜</small></td>
+            <td>11,000円〜</td>
+            <td>無料〜<br><small style="color:#aaa">（有料詳細非公開）</small></td>
             <td>0円</td>
           </tr>
           <tr>
@@ -727,9 +931,11 @@
 <!-- なぜHanaFlowか -->
 <section id="about">
   <div class="container">
-    <p class="section-label">なぜHanaFlowか</p>
-    <h2 class="section-title" style="margin-bottom:32px;">花屋の現場で<br>「あの注文どこ行った」をやらかした側が作りました</h2>
-    <div class="why-us-box">
+    <span class="section-eyebrow reveal">なぜHanaFlowか</span>
+    <h2 class="section-title reveal" style="margin-bottom:32px;">
+      花屋の現場で「あの注文どこ行った」<br>をやらかした側が作りました
+    </h2>
+    <div class="why-us-box reveal">
       <div class="why-us-header">
         <div class="founder-avatar">🌸</div>
         <div>
@@ -743,7 +949,7 @@
         「紙・Excel・LINEが混在して受注が漏れる」を自分で経験したから、どこで漏れるかを知っている。<br>
         既存ツールは高すぎ、汎用ツールは花屋業務に合わない——だから自分で作りました。
       </p>
-      <div class="why-us-reasons">
+      <div class="why-reasons">
         <div class="why-reason">
           <div class="why-reason-icon">🔧</div>
           <div class="why-reason-text">
@@ -768,7 +974,7 @@
       </div>
     </div>
 
-    <div class="beta-invite">
+    <div class="beta-invite reveal">
       <p class="bi-title">一緒に作ってくれる5社を探しています</p>
       <p class="bi-body">
         HanaFlowはまだ完成品ではありません。<br>
@@ -776,7 +982,7 @@
         「うちの困りごとをツールに反映させたい」という店に向いています。
       </p>
       <a href="https://forms.gle/MMvSghpeCheXirDs7" class="cta-btn">無料ベータに申し込む（残り5社）</a>
-      <p class="cta-note">初期費用0円 ／ クレカ登録なし ／ いつでも停止OK</p>
+      <p class="cta-note" style="margin-top:14px;color:var(--text-sub);">初期費用0円 ／ クレカ登録なし ／ いつでも停止OK</p>
     </div>
   </div>
 </section>
@@ -784,11 +990,11 @@
 <!-- 料金 -->
 <section id="pricing">
   <div class="container">
-    <p class="section-label">料金</p>
-    <h2 class="section-title">初期費用ゼロ。<br>使った月だけ払う</h2>
-    <p class="section-lead">ベータ期間は完全無料。じっくりお試しいただき、率直なご意見をください。</p>
+    <span class="section-eyebrow reveal">料金</span>
+    <h2 class="section-title reveal">初期費用ゼロ。<br>使った月だけ払う</h2>
+    <p class="section-lead reveal">ベータ期間は完全無料。じっくりお試しいただき、率直なご意見をください。</p>
     <div class="pricing-grid">
-      <div class="pricing-card featured">
+      <div class="pricing-card featured reveal">
         <span class="pricing-badge">今だけ・5社限定</span>
         <p class="pricing-name">BETA</p>
         <p class="pricing-price">¥0<span>/月</span></p>
@@ -801,7 +1007,7 @@
           <li>スマホ完全対応</li>
         </ul>
       </div>
-      <div class="pricing-card">
+      <div class="pricing-card reveal reveal-delay-1">
         <p class="pricing-name">START</p>
         <p class="pricing-price">¥9,800<span>/月</span></p>
         <p class="pricing-desc">1店舗で受注と顧客管理を<br>整えたい店向け</p>
@@ -811,7 +1017,7 @@
           <li>機能リクエスト受付</li>
         </ul>
       </div>
-      <div class="pricing-card">
+      <div class="pricing-card reveal reveal-delay-2">
         <p class="pricing-name">PRO</p>
         <p class="pricing-price">¥14,800<span>/月</span></p>
         <p class="pricing-desc">配達・請求・LINE連携まで<br>使いたい店向け（フェーズ2〜）</p>
@@ -823,7 +1029,7 @@
         </ul>
       </div>
     </div>
-    <p class="pricing-note">
+    <p class="pricing-note reveal">
       すべてのプランで初期費用0円。いつでも解約可。契約期間の縛りはありません。<br>
       ベータ→正式版の移行は必ず事前にご案内します。自動課金はありません。
     </p>
@@ -833,30 +1039,30 @@
 <!-- FAQ -->
 <section id="faq">
   <div class="container">
-    <p class="section-label">よくある質問</p>
-    <h2 class="section-title" style="margin-bottom:32px;">導入前に気になること</h2>
+    <span class="section-eyebrow reveal">よくある質問</span>
+    <h2 class="section-title reveal" style="text-align:center;margin-bottom:36px;">導入前に気になること</h2>
     <div class="faq-list">
-      <details>
+      <details class="reveal">
         <summary>PCが苦手でも使えますか？</summary>
         <div class="faq-body">スマホだけで完結するよう設計しています。アプリのダウンロードも不要です。ブラウザを開くだけで使えます。電話を受けながら入力できる画面を目指しています。</div>
       </details>
-      <details>
+      <details class="reveal">
         <summary>今使っているExcelやLINEはどうなりますか？</summary>
         <div class="faq-body">移行は段階的でかまいません。「電話注文だけHanaFlowに入れる」という使い方から始めて、慣れたら全部移す。それくらいの軽さで始めてください。</div>
       </details>
-      <details>
+      <details class="reveal">
         <summary>データが消えたりしませんか？</summary>
         <div class="faq-body">クラウド保存です。スマホを落としてもPCが壊れても、データは消えません。CSV出力もできるので手元にバックアップを取ることもできます。</div>
       </details>
-      <details>
+      <details class="reveal">
         <summary>ベータが終わったら自動で課金されますか？</summary>
         <div class="faq-body">されません。正式版へ移る際は必ず事前にご案内し、ご了承いただいてから移行します。クレカ登録も不要です。</div>
       </details>
-      <details>
+      <details class="reveal">
         <summary>今は受注管理だけですか？他の機能は？</summary>
         <div class="faq-body">フェーズ0（現在）は受注台帳と顧客管理に絞っています。配達台帳・廃棄管理・LINE連携はフェーズ2以降で追加予定です。ベータユーザーの要望を優先して開発します。</div>
       </details>
-      <details>
+      <details class="reveal">
         <summary>合わなかったらすぐ止められますか？</summary>
         <div class="faq-body">はい。いつでも停止できます。違約金も縛りもありません。ベータ期間は月額も0円なので、損をする仕組みが一切ありません。</div>
       </details>
@@ -881,6 +1087,19 @@
 <footer>
   <p>© 2026 RakuAI / HanaFlow</p>
 </footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
 
 </body>
 </html>
