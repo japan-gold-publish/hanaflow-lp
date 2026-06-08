@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HanaFlow — 注文情報が消えない、花屋向け受注管理ツール</title>
-  <meta name="description" content="紙・電話・LINEの注文情報が消えてクレームになった経験から生まれた受注管理ツール。花屋の現場を知る設計者が作りました。無料ベータ5社限定。初期費用ゼロ。">
+  <title>HanaFlow — LINEの注文が、台帳に並ぶ。花屋向け受注管理ツール</title>
+  <meta name="description" content="AIがLINEで注文を受けて、台帳を作る。転記ゼロ・受注漏れゼロ。花屋の現場を知る設計者が作った受注管理ツール。無料ベータ5社限定。初期費用ゼロ。">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -25,25 +25,25 @@
       --white:       #ffffff;
     }
 
+    *, *::before, *::after { box-sizing: border-box; }
     body {
       font-family: 'Noto Sans JP', sans-serif;
       color: var(--text);
-      line-height: 2.0;
+      line-height: 1.95;
       background: var(--bg);
-      font-size: 19px;
+      font-size: 17px;
       letter-spacing: 0.02em;
       -webkit-font-smoothing: antialiased;
     }
-
     h1, h2, h3 { line-height: 1.35; }
     a { color: inherit; text-decoration: none; }
     .container { max-width: 880px; margin: 0 auto; padding: 0 24px; }
 
-    /* ── Scroll animations ── */
+    /* ── アニメーション ── */
     .reveal {
       opacity: 0;
-      transform: translateY(24px);
-      transition: opacity .65s ease, transform .65s ease;
+      transform: translateY(20px);
+      transition: opacity .6s ease, transform .6s ease;
     }
     .reveal.visible { opacity: 1; transform: none; }
     .reveal-delay-1 { transition-delay: .1s; }
@@ -52,628 +52,381 @@
 
     /* ── Nav ── */
     nav {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(255,255,255,.92);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,.94);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
-      padding: 0 28px;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      padding: 0 28px; height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
     }
-    .nav-logo {
-      font-size: 1.25rem;
-      font-weight: 900;
-      color: var(--green);
-      letter-spacing: -.01em;
-    }
+    .nav-logo { font-size: 1.2rem; font-weight: 900; color: var(--green); letter-spacing: -.01em; }
     .nav-logo span { color: var(--accent); }
     .nav-cta {
-      background: var(--accent);
-      color: white;
-      padding: 10px 22px;
-      border-radius: 100px;
-      font-size: 0.95rem;
-      font-weight: 700;
-      white-space: nowrap;
-      box-shadow: 0 2px 12px rgba(229,90,43,.3);
-      transition: all .2s;
+      background: var(--accent); color: white;
+      padding: 9px 20px; border-radius: 8px;
+      font-size: 0.9rem; font-weight: 700;
+      box-shadow: 0 2px 10px rgba(229,90,43,.3);
+      transition: all .2s; white-space: nowrap;
     }
     .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(229,90,43,.4); }
 
     /* ── Hero ── */
     .hero {
-      background: linear-gradient(150deg, #edfaf2 0%, #f8f9fb 55%, #fff 100%);
-      padding: 72px 24px 64px;
-      overflow: hidden;
-      position: relative;
+      background: linear-gradient(150deg, #edfaf2 0%, #f8f9fb 60%, #fff 100%);
+      padding: 80px 24px 72px;
+      overflow: hidden; position: relative;
     }
     .hero::before {
-      content: '';
-      position: absolute;
-      top: -80px; right: -80px;
-      width: 400px; height: 400px;
-      background: radial-gradient(circle, rgba(34,160,90,.08) 0%, transparent 70%);
+      content: ''; position: absolute;
+      top: -100px; right: -100px;
+      width: 480px; height: 480px;
+      background: radial-gradient(circle, rgba(34,160,90,.07) 0%, transparent 70%);
       pointer-events: none;
     }
     .hero-inner {
-      max-width: 880px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr 260px;
-      gap: 48px;
-      align-items: center;
+      max-width: 880px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 240px;
+      gap: 56px; align-items: center;
     }
     .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--accent-pale);
-      border: 1px solid rgba(229,90,43,.2);
-      color: var(--accent);
-      font-size: 0.9rem;
-      font-weight: 700;
-      padding: 6px 14px;
-      border-radius: 100px;
-      margin-bottom: 20px;
+      display: inline-flex; align-items: center; gap: 7px;
+      background: var(--accent-pale); border: 1px solid rgba(229,90,43,.2);
+      color: var(--accent); font-size: 0.88rem; font-weight: 700;
+      padding: 5px 14px; border-radius: 100px; margin-bottom: 20px;
       letter-spacing: .04em;
     }
-    .hero-badge::before { content: '●'; font-size: .6rem; animation: pulse 1.5s ease-in-out infinite; }
-    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+    .hero-badge::before { content: '●'; font-size: .55rem; animation: blink 1.8s ease-in-out infinite; }
+    @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:.25; } }
 
     .hero h1 {
-      font-size: clamp(2.1rem, 5.5vw, 3.2rem);
-      font-weight: 900;
-      color: var(--text);
-      letter-spacing: -.025em;
-      margin-bottom: 20px;
-      line-height: 1.25;
+      font-size: clamp(2.4rem, 6vw, 3.6rem);
+      font-weight: 900; letter-spacing: -.03em;
+      line-height: 1.15; margin-bottom: 18px; color: var(--text);
     }
     .hero h1 em {
-      font-style: normal;
-      color: var(--green);
-      position: relative;
+      font-style: normal; color: var(--green); position: relative;
     }
     .hero h1 em::after {
-      content: '';
-      position: absolute;
-      bottom: -2px; left: 0; right: 0;
-      height: 4px;
+      content: ''; position: absolute;
+      bottom: -2px; left: 0; right: 0; height: 4px;
       background: linear-gradient(90deg, var(--green), var(--green-mid));
-      border-radius: 2px;
-      opacity: .4;
+      border-radius: 2px; opacity: .35;
     }
-    .hero-scene {
-      font-size: 1.0rem;
-      color: var(--text-sub);
-      line-height: 2.1;
-      margin-bottom: 20px;
-      padding: 20px 24px;
-      background: white;
-      border-left: 4px solid var(--accent);
-      border-radius: 0 10px 10px 0;
-      box-shadow: 0 2px 12px rgba(0,0,0,.06);
-    }
-    .hero-scene strong { color: var(--text); }
     .hero-sub {
-      font-size: 1.05rem;
-      color: var(--text-sub);
-      margin-bottom: 36px;
-      line-height: 1.9;
+      font-size: 1.05rem; color: var(--text-sub);
+      line-height: 1.85; margin-bottom: 32px;
     }
+    .cta-wrap { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
     .cta-btn {
-      display: inline-block;
+      display: inline-flex; align-items: center; justify-content: center;
       background: linear-gradient(135deg, var(--accent) 0%, #d44520 100%);
-      color: white;
-      padding: 20px 52px;
-      border-radius: 100px;
-      font-size: 1.1rem;
-      font-weight: 700;
-      box-shadow: 0 6px 24px rgba(229,90,43,.35);
-      transition: all .25s;
-      letter-spacing: .02em;
+      color: white; padding: 14px 36px; border-radius: 8px;
+      font-size: 1.0rem; font-weight: 700; min-height: 46px;
+      box-shadow: 0 4px 16px rgba(229,90,43,.35);
+      transition: all .22s; letter-spacing: .02em;
     }
-    .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(229,90,43,.45); }
-    .cta-note {
-      font-size: 0.9rem;
-      color: var(--text-sub);
-      margin-top: 14px;
-    }
+    .cta-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(229,90,43,.45); }
+    .cta-note { font-size: 0.85rem; color: var(--text-sub); }
 
     /* phone mockup */
     .phone-wrap {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
+      display: flex; justify-content: center; align-items: center; position: relative;
     }
     .phone-wrap::before {
-      content: '';
-      position: absolute;
-      inset: -20px;
-      background: radial-gradient(ellipse, rgba(34,160,90,.12) 0%, transparent 70%);
+      content: ''; position: absolute; inset: -24px;
+      background: radial-gradient(ellipse, rgba(34,160,90,.11) 0%, transparent 70%);
       border-radius: 50%;
     }
     .phone-frame {
-      width: 220px;
-      background: #1a1a2e;
-      border-radius: 40px;
-      padding: 14px 9px 18px;
-      box-shadow:
-        0 40px 80px rgba(0,0,0,.28),
-        0 0 0 1px rgba(255,255,255,.06),
-        inset 0 0 0 1px rgba(255,255,255,.04);
-      position: relative;
-      z-index: 1;
+      width: 210px; background: #111;
+      border-radius: 38px; padding: 12px 8px 16px;
+      box-shadow: 0 32px 72px rgba(0,0,0,.3), 0 0 0 1px rgba(255,255,255,.06);
+      position: relative; z-index: 1;
     }
     .phone-notch {
-      width: 80px;
-      height: 22px;
-      background: #1a1a2e;
-      border-radius: 0 0 14px 14px;
-      margin: 0 auto 6px;
-      position: relative;
-      z-index: 2;
+      width: 72px; height: 20px; background: #111;
+      border-radius: 0 0 12px 12px; margin: 0 auto 5px; position: relative; z-index: 2;
     }
-    .phone-screen {
-      border-radius: 28px;
-      overflow: hidden;
-      background: #f8f9fb;
-    }
-    .phone-screen img {
-      width: 100%;
-      display: block;
-    }
-    .phone-indicator {
-      width: 100px;
-      height: 4px;
-      background: rgba(255,255,255,.2);
-      border-radius: 2px;
-      margin: 12px auto 0;
-    }
+    .phone-screen { border-radius: 26px; overflow: hidden; background: var(--bg); }
+    .phone-screen img { width: 100%; display: block; }
+    .phone-bar { width: 90px; height: 4px; background: rgba(255,255,255,.18); border-radius: 2px; margin: 10px auto 0; }
 
-    /* ── Trust strip ── */
-    .trust-strip {
-      background: var(--green);
-      padding: 20px 24px;
-    }
-    .trust-strip-inner {
-      max-width: 880px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: center;
-      gap: 48px;
-      flex-wrap: wrap;
-    }
-    .trust-item { color: white; text-align: center; }
-    .trust-item .t-num {
-      font-size: 1.35rem;
-      font-weight: 900;
-      display: block;
-      line-height: 1.2;
-    }
-    .trust-item .t-label {
-      font-size: 0.88rem;
-      opacity: .85;
-      margin-top: 2px;
-    }
+    /* ── Stats strip ── */
+    .stats-strip { background: white; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 44px 24px; }
+    .stats-inner { max-width: 880px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); }
+    .stat-item { text-align: center; padding: 8px 16px; border-right: 1px solid var(--border); }
+    .stat-item:last-child { border-right: none; }
+    .stat-num { font-size: 2.6rem; font-weight: 900; color: var(--green); letter-spacing: -.03em; line-height: 1.1; display: block; }
+    .stat-unit { font-size: 1.0rem; font-weight: 700; color: var(--green); }
+    .stat-label { font-size: 0.82rem; color: var(--text-sub); margin-top: 6px; line-height: 1.6; display: block; }
+    .stats-note { text-align: center; font-size: 0.78rem; color: #aaa; margin-top: 14px; }
 
     /* ── Sections ── */
     section { padding: 80px 24px; }
     section:nth-child(even) { background: var(--white); }
-
     .section-eyebrow {
-      display: inline-block;
-      font-size: 1.0rem;
-      font-weight: 700;
-      letter-spacing: .06em;
-      color: var(--green);
-      margin-bottom: 12px;
+      display: inline-block; font-size: 0.88rem; font-weight: 700;
+      letter-spacing: .08em; color: var(--green); margin-bottom: 10px;
     }
     .section-title {
-      font-size: clamp(1.6rem, 4vw, 2.2rem);
-      font-weight: 900;
-      letter-spacing: -.02em;
-      margin-bottom: 16px;
-      line-height: 1.3;
+      font-size: clamp(1.6rem, 4vw, 2.2rem); font-weight: 900;
+      letter-spacing: -.02em; margin-bottom: 14px; line-height: 1.3;
     }
     .section-lead {
-      color: var(--text-sub);
-      font-size: 1.02rem;
-      line-height: 1.95;
-      margin-bottom: 44px;
-      max-width: 560px;
+      color: var(--text-sub); font-size: 1.0rem;
+      line-height: 1.95; margin-bottom: 40px; max-width: 560px;
     }
 
-    /* ── Pain cards ── */
-    .pain-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 16px;
+    /* ── Pain ── */
+    .pain-who {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 36px;
     }
+    .pain-who-tag {
+      background: var(--green-light); color: var(--green);
+      font-size: 0.85rem; font-weight: 700; padding: 5px 14px;
+      border-radius: 100px; border: 1px solid rgba(26,122,69,.15);
+    }
+    .pain-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
     .pain-card {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 28px 24px;
-      box-shadow: 0 2px 16px rgba(0,0,0,.05);
-      position: relative;
-      overflow: hidden;
+      background: white; border: 1px solid var(--border); border-radius: 14px;
+      padding: 24px 20px; position: relative; overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,.04);
       transition: transform .2s, box-shadow .2s;
     }
     .pain-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-      background: var(--accent);
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      height: 3px; background: var(--accent);
     }
-    .pain-card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,.09); }
-    .pain-icon { font-size: 2rem; margin-bottom: 14px; }
-    .pain-card h3 { font-size: 1.02rem; font-weight: 700; margin-bottom: 10px; color: var(--text); }
-    .pain-card p { font-size: 0.93rem; color: var(--text-sub); line-height: 1.8; }
+    .pain-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.08); }
+    .pain-icon { font-size: 1.8rem; margin-bottom: 12px; }
+    .pain-card h3 { font-size: 1.0rem; font-weight: 700; margin-bottom: 8px; }
+    .pain-card p { font-size: 0.9rem; color: var(--text-sub); line-height: 1.85; }
 
-    /* ── Features ── */
-    .feature-list { display: grid; gap: 16px; }
-    .feature-item {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 28px 32px;
-      display: grid;
-      grid-template-columns: 52px 1fr;
-      gap: 24px;
-      align-items: start;
-      box-shadow: 0 2px 12px rgba(0,0,0,.04);
-      transition: border-color .2s;
+    /* ── How + Features combined ── */
+    .how-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+    .flow-steps { display: grid; gap: 0; }
+    .flow-step {
+      display: grid; grid-template-columns: 48px 1fr; gap: 16px;
+      align-items: flex-start; padding: 0 0 28px; position: relative;
     }
+    .flow-step:last-child { padding-bottom: 0; }
+    .flow-step::before {
+      content: ''; position: absolute;
+      left: 23px; top: 48px; bottom: 0; width: 2px; background: var(--green-light);
+    }
+    .flow-step:last-child::before { display: none; }
+    .flow-num {
+      width: 48px; height: 48px; border-radius: 50%; background: var(--green);
+      color: white; font-size: 1.1rem; font-weight: 900;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; position: relative; z-index: 1;
+    }
+    .flow-content { padding-top: 10px; }
+    .flow-tag {
+      display: inline-block; background: var(--green-light); color: var(--green);
+      font-size: 0.8rem; font-weight: 700; padding: 2px 10px;
+      border-radius: 100px; margin-bottom: 6px;
+    }
+    .flow-content h3 { font-size: 0.98rem; font-weight: 700; margin-bottom: 4px; }
+    .flow-content p { font-size: 0.88rem; color: var(--text-sub); line-height: 1.8; }
+
+    .feature-list { display: grid; gap: 12px; }
+    .feature-item {
+      background: white; border: 1.5px solid var(--border); border-radius: 14px;
+      padding: 20px 22px; display: grid; grid-template-columns: 44px 1fr;
+      gap: 16px; align-items: start;
+      box-shadow: 0 2px 10px rgba(0,0,0,.04); transition: border-color .2s;
+    }
+    .feature-item.highlight { border-color: var(--green); background: linear-gradient(135deg, #f2faf5 0%, white 100%); }
     .feature-item:hover { border-color: var(--green-mid); }
     .feature-num {
-      width: 52px;
-      height: 52px;
-      background: var(--green-light);
-      color: var(--green);
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 900;
-      font-size: 1.25rem;
-      flex-shrink: 0;
+      width: 44px; height: 44px; border-radius: 12px;
+      background: var(--green-light); color: var(--green);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 1.15rem; flex-shrink: 0;
     }
-    .feature-item h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
-    .feature-item p { font-size: 0.95rem; color: var(--text-sub); line-height: 1.85; }
+    .feature-item.highlight .feature-num { background: var(--green); color: white; }
+    .feature-badge { display: inline-block; background: var(--accent-pale); color: var(--accent); font-size: 0.78rem; font-weight: 700; padding: 2px 9px; border-radius: 100px; margin-bottom: 6px; }
+    .feature-item h3 { font-size: 0.98rem; font-weight: 700; margin-bottom: 6px; }
+    .feature-item p { font-size: 0.88rem; color: var(--text-sub); line-height: 1.8; }
 
     /* ── Before / After ── */
-    .ba-grid { display: grid; gap: 20px; }
+    .ba-grid { display: grid; gap: 14px; }
     .ba-row {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 2px 12px rgba(0,0,0,.04);
-      display: grid;
-      grid-template-columns: 1fr 44px 1fr;
-      align-items: center;
+      background: white; border: 1px solid var(--border); border-radius: 14px;
+      overflow: hidden; display: grid; grid-template-columns: 1fr 40px 1fr;
+      align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,.04);
     }
-    .ba-side { padding: 24px 28px; }
-    .ba-label {
-      font-size: 0.84rem;
-      font-weight: 700;
-      letter-spacing: .1em;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .ba-label.before {
-      color: var(--accent);
-    }
-    .ba-label.before::before { content: ''; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
-    .ba-label.after {
-      color: var(--green);
-    }
-    .ba-label.after::before { content: ''; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+    .ba-side { padding: 22px 24px; }
     .ba-side.before { background: #fff7f5; }
     .ba-side.after  { background: #f2faf5; }
-    .ba-text { font-size: 1.0rem; line-height: 1.9; color: var(--text); }
-    .ba-arrow {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-      color: var(--text-sub);
-    }
+    .ba-label { font-size: 0.8rem; font-weight: 700; letter-spacing: .1em; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .ba-label.before { color: var(--accent); }
+    .ba-label.before::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); display: inline-block; }
+    .ba-label.after { color: var(--green); }
+    .ba-label.after::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--green); display: inline-block; }
+    .ba-text { font-size: 0.95rem; line-height: 1.85; }
+    .ba-arrow { text-align: center; color: var(--text-sub); font-size: 1.1rem; }
 
-    /* ── ROI ── */
-    .roi-box {
-      background: white;
-      border-radius: 20px;
-      padding: 44px 40px;
-      border: 2px solid var(--green-light);
-      box-shadow: 0 8px 32px rgba(26,122,69,.08);
+    /* ── Mid CTA ── */
+    .mid-cta {
+      background: linear-gradient(135deg, var(--green-light) 0%, #e8f5ee 100%);
+      padding: 56px 24px; text-align: center;
+      border-top: 1px solid rgba(26,122,69,.12);
+      border-bottom: 1px solid rgba(26,122,69,.12);
     }
-    .roi-title {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 32px;
-      text-align: center;
-    }
-    .roi-grid {
-      display: grid;
-      grid-template-columns: 1fr 40px 1fr;
-      gap: 16px;
-      align-items: center;
-      margin-bottom: 28px;
-    }
-    .roi-item {
-      background: var(--green-light);
-      border-radius: 14px;
-      padding: 24px 20px;
-      text-align: center;
-    }
-    .roi-num {
-      font-size: 2rem;
-      font-weight: 900;
-      color: var(--accent);
-      line-height: 1.1;
-      display: block;
-    }
-    .roi-sub { font-size: 0.92rem; color: var(--text-sub); margin-top: 6px; line-height: 1.7; }
-    .roi-eq { font-size: 1.6rem; font-weight: 800; color: var(--text-sub); text-align: center; }
-    .roi-conclusion {
-      background: var(--green);
-      color: white;
-      border-radius: 12px;
-      padding: 22px 28px;
-      text-align: center;
-      font-size: 1.02rem;
-      font-weight: 700;
-      line-height: 1.75;
-    }
+    .mid-cta p.mc-lead { font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .mid-cta p.mc-sub { font-size: 0.95rem; color: var(--text-sub); margin-bottom: 28px; }
 
     /* ── Compare ── */
-    .compare-wrap { overflow-x: auto; border-radius: 16px; box-shadow: 0 2px 16px rgba(0,0,0,.06); }
-    .compare-table { width: 100%; border-collapse: collapse; font-size: 0.93rem; min-width: 560px; background: white; }
-    .compare-table th,
-    .compare-table td { padding: 15px 18px; border-bottom: 1px solid var(--border); text-align: center; }
-    .compare-table thead th { background: var(--text); color: white; font-weight: 700; font-size: 0.9rem; }
-    .compare-table thead th:first-child { border-radius: 16px 0 0 0; }
-    .compare-table thead th:last-child  { border-radius: 0 16px 0 0; }
+    .compare-wrap { overflow-x: auto; border-radius: 14px; box-shadow: 0 2px 14px rgba(0,0,0,.06); }
+    .compare-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; min-width: 540px; background: white; }
+    .compare-table th, .compare-table td { padding: 13px 16px; border-bottom: 1px solid var(--border); text-align: center; }
+    .compare-table thead th { background: var(--text); color: white; font-weight: 700; font-size: 0.88rem; }
+    .compare-table thead th:first-child { border-radius: 14px 0 0 0; }
+    .compare-table thead th:last-child  { border-radius: 0 14px 0 0; }
     .compare-table tbody tr:last-child td { border-bottom: none; }
     .compare-table tbody tr:hover { background: var(--bg); }
-    .compare-table td:first-child { text-align: left; font-weight: 600; font-size: 0.9rem; color: var(--text-sub); }
+    .compare-table td:first-child { text-align: left; font-weight: 600; font-size: 0.88rem; color: var(--text-sub); }
+    .compare-table tr.hl td { background: #f2faf5; }
+    .compare-table tr.hl td:first-child { color: var(--green); font-weight: 700; }
+    th.hana { background: rgba(26,122,69,.1) !important; color: var(--green) !important; }
     .hana  { font-weight: 700; color: var(--green); }
     .check { color: var(--green); font-weight: 700; }
     .cross { color: #ccc; }
     .delta { color: #aaa; }
-    th.hana { background: rgba(26,122,69,.12) !important; color: var(--green) !important; }
+    .roi-note {
+      margin-top: 20px; padding: 16px 20px; background: white;
+      border-radius: 10px; border: 1px solid var(--border);
+      font-size: 0.9rem; color: var(--text-sub); line-height: 1.8; text-align: center;
+    }
+    .roi-note strong { color: var(--text); }
 
     /* ── Why Us ── */
-    .why-us-box {
-      background: white;
-      border-radius: 20px;
-      padding: 40px;
-      border: 1px solid var(--border);
-      box-shadow: 0 4px 24px rgba(0,0,0,.06);
+    .why-box {
+      background: white; border-radius: 18px; padding: 36px;
+      border: 1px solid var(--border); box-shadow: 0 4px 20px rgba(0,0,0,.05);
     }
-    .why-us-header {
-      display: grid;
-      grid-template-columns: 72px 1fr;
-      gap: 20px;
-      align-items: center;
-      margin-bottom: 24px;
-      padding-bottom: 24px;
-      border-bottom: 1px solid var(--border);
+    .why-header {
+      display: grid; grid-template-columns: 64px 1fr;
+      gap: 18px; align-items: center; margin-bottom: 22px;
+      padding-bottom: 22px; border-bottom: 1px solid var(--border);
     }
     .founder-avatar {
-      width: 72px;
-      height: 72px;
+      width: 64px; height: 64px;
       background: linear-gradient(135deg, var(--green), var(--green-mid));
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
-      flex-shrink: 0;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; flex-shrink: 0;
     }
-    .founder-name  { font-size: 1rem; font-weight: 700; color: var(--green); margin-bottom: 4px; }
-    .founder-title { font-size: 0.88rem; color: var(--text-sub); line-height: 1.6; }
-    .why-us-body   { font-size: 0.97rem; color: var(--text-sub); line-height: 2.0; margin-bottom: 24px; }
-    .why-us-body strong { color: var(--text); }
-    .why-reasons { display: grid; gap: 12px; }
+    .founder-name  { font-size: 0.95rem; font-weight: 700; color: var(--green); margin-bottom: 3px; }
+    .founder-title { font-size: 0.84rem; color: var(--text-sub); line-height: 1.6; }
+    .why-body { font-size: 0.95rem; color: var(--text-sub); line-height: 2.0; margin-bottom: 22px; }
+    .why-body strong { color: var(--text); }
+    .why-reasons { display: grid; gap: 10px; }
     .why-reason {
-      display: flex;
-      gap: 16px;
-      align-items: flex-start;
-      padding: 18px 20px;
-      background: var(--bg);
-      border-radius: 12px;
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 16px 18px; background: var(--bg); border-radius: 10px;
       border: 1px solid var(--border);
     }
-    .why-reason-icon { font-size: 1.4rem; flex-shrink: 0; }
-    .why-reason-text { font-size: 0.94rem; line-height: 1.8; }
-    .why-reason-text strong { color: var(--green); display: block; margin-bottom: 2px; font-size: 0.98rem; }
+    .why-reason-icon { font-size: 1.3rem; flex-shrink: 0; }
+    .why-reason-text { font-size: 0.9rem; line-height: 1.8; }
+    .why-reason-text strong { color: var(--green); display: block; font-size: 0.95rem; margin-bottom: 2px; }
 
-    /* ── Beta invite ── */
     .beta-invite {
-      margin-top: 36px;
-      background: linear-gradient(135deg, var(--green-light) 0%, #fff 100%);
-      border: 2px solid rgba(26,122,69,.2);
-      border-radius: 20px;
-      padding: 40px 32px;
-      text-align: center;
+      margin-top: 32px; background: linear-gradient(135deg, var(--green-light), #f0fdf5);
+      border: 2px solid rgba(26,122,69,.2); border-radius: 16px;
+      padding: 36px 28px; text-align: center;
     }
-    .beta-invite p.bi-title {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: var(--green);
-      margin-bottom: 12px;
-    }
-    .beta-invite p.bi-body {
-      font-size: 0.97rem;
-      color: var(--text-sub);
-      line-height: 1.95;
-      margin-bottom: 28px;
-      max-width: 520px;
-      margin-left: auto;
-      margin-right: auto;
-    }
+    .beta-invite p.bi-title { font-size: 1.1rem; font-weight: 700; color: var(--green); margin-bottom: 10px; }
+    .beta-invite p.bi-body { font-size: 0.92rem; color: var(--text-sub); line-height: 1.95; margin-bottom: 24px; max-width: 480px; margin-left: auto; margin-right: auto; }
 
     /* ── Pricing ── */
-    .pricing-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 20px;
-    }
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; }
     .pricing-card {
-      background: white;
-      border: 1.5px solid var(--border);
-      border-radius: 20px;
-      padding: 32px 26px;
-      text-align: center;
-      box-shadow: 0 2px 12px rgba(0,0,0,.04);
-      transition: border-color .2s, box-shadow .2s;
+      background: white; border: 1.5px solid var(--border); border-radius: 18px;
+      padding: 28px 22px; text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,.04); transition: border-color .2s, box-shadow .2s;
     }
-    .pricing-card:hover { border-color: var(--green-mid); box-shadow: 0 8px 28px rgba(0,0,0,.08); }
-    .pricing-card.featured {
-      border-color: var(--accent);
-      position: relative;
-      box-shadow: 0 8px 32px rgba(229,90,43,.15);
-    }
+    .pricing-card:hover { border-color: var(--green-mid); box-shadow: 0 6px 24px rgba(0,0,0,.07); }
+    .pricing-card.featured { border-color: var(--accent); position: relative; box-shadow: 0 6px 28px rgba(229,90,43,.14); }
     .pricing-badge {
-      position: absolute;
-      top: -14px; left: 50%;
-      transform: translateX(-50%);
-      background: var(--accent);
-      color: white;
-      font-size: 0.87rem;
-      font-weight: 700;
-      padding: 5px 18px;
-      border-radius: 100px;
-      white-space: nowrap;
+      position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+      background: var(--accent); color: white; font-size: 0.84rem; font-weight: 700;
+      padding: 4px 16px; border-radius: 100px; white-space: nowrap;
     }
-    .pricing-name  { font-size: 0.88rem; font-weight: 700; color: var(--text-sub); margin-bottom: 12px; letter-spacing: .1em; }
-    .pricing-price { font-size: 2.4rem; font-weight: 900; color: var(--text); margin-bottom: 6px; letter-spacing: -.03em; }
-    .pricing-price span { font-size: 0.95rem; font-weight: 400; color: var(--text-sub); }
-    .pricing-desc  { font-size: 0.94rem; color: var(--text-sub); margin-bottom: 22px; line-height: 1.8; }
-    .pricing-features { list-style: none; font-size: 0.95rem; text-align: left; }
-    .pricing-features li {
-      padding: 9px 0;
-      border-bottom: 1px solid var(--border);
-      color: var(--text-sub);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .pricing-name  { font-size: 0.84rem; font-weight: 700; color: var(--text-sub); margin-bottom: 10px; letter-spacing: .1em; }
+    .pricing-price { font-size: 2.2rem; font-weight: 900; color: var(--text); margin-bottom: 5px; letter-spacing: -.03em; }
+    .pricing-price span { font-size: 0.9rem; font-weight: 400; color: var(--text-sub); }
+    .pricing-desc  { font-size: 0.9rem; color: var(--text-sub); margin-bottom: 20px; line-height: 1.75; }
+    .pricing-features { list-style: none; font-size: 0.9rem; text-align: left; }
+    .pricing-features li { padding: 8px 0; border-bottom: 1px solid var(--border); color: var(--text-sub); display: flex; align-items: center; gap: 7px; }
     .pricing-features li:last-child { border-bottom: none; }
     .pricing-features li::before { content: "✓"; color: var(--green); font-weight: 700; flex-shrink: 0; }
-    .pricing-note { text-align: center; font-size: 0.95rem; color: var(--text-sub); margin-top: 24px; line-height: 1.9; }
+    .pricing-note { text-align: center; font-size: 0.9rem; color: var(--text-sub); margin-top: 22px; line-height: 1.9; }
 
     /* ── FAQ ── */
-    .faq-list { display: grid; gap: 8px; max-width: 680px; margin: 0 auto; }
-    details {
-      border: 1.5px solid var(--border);
-      border-radius: 14px;
-      background: white;
-      overflow: hidden;
-      transition: border-color .2s;
-    }
+    .faq-list { display: grid; gap: 7px; max-width: 680px; margin: 0 auto; }
+    details { border: 1.5px solid var(--border); border-radius: 12px; background: white; overflow: hidden; transition: border-color .2s; }
     details[open] { border-color: var(--green); }
     details summary {
-      padding: 20px 24px;
-      font-weight: 600;
-      cursor: pointer;
-      font-size: 1.0rem;
-      list-style: none;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
+      padding: 18px 22px; font-weight: 600; cursor: pointer; font-size: 0.97rem;
+      list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px;
     }
     details summary::-webkit-details-marker { display: none; }
     details summary::before { content: "Q. "; color: var(--green); font-weight: 900; flex-shrink: 0; }
-    details summary::after  { content: "＋"; color: var(--green); font-size: 1.1rem; font-weight: 700; flex-shrink: 0; }
+    details summary::after  { content: "＋"; color: var(--green); font-size: 1.05rem; font-weight: 700; flex-shrink: 0; }
     details[open] summary::after { content: "－"; }
-    .faq-body {
-      padding: 14px 24px 22px;
-      font-size: 1.0rem;
-      color: var(--text-sub);
-      line-height: 2.0;
-      border-top: 1px solid var(--border);
-    }
+    .faq-body { padding: 12px 22px 20px; font-size: 0.95rem; color: var(--text-sub); line-height: 2.0; border-top: 1px solid var(--border); }
 
     /* ── Final CTA ── */
     .final-cta {
       background: linear-gradient(150deg, #0d5c30 0%, #1a7a45 60%, #22a05a 100%);
-      color: white;
-      text-align: center;
-      padding: 96px 24px;
-      position: relative;
-      overflow: hidden;
+      color: white; text-align: center; padding: 96px 24px; position: relative; overflow: hidden;
     }
     .final-cta::before {
-      content: '';
-      position: absolute;
-      top: -120px; right: -120px;
-      width: 480px; height: 480px;
-      background: radial-gradient(circle, rgba(255,255,255,.07) 0%, transparent 70%);
+      content: ''; position: absolute;
+      top: -100px; right: -100px;
+      width: 460px; height: 460px;
+      background: radial-gradient(circle, rgba(255,255,255,.06) 0%, transparent 70%);
     }
     .final-cta h2 {
-      font-size: clamp(1.7rem, 4.5vw, 2.4rem);
-      font-weight: 900;
-      margin-bottom: 14px;
-      letter-spacing: -.02em;
-      position: relative;
+      font-size: clamp(1.7rem, 4.5vw, 2.4rem); font-weight: 900;
+      margin-bottom: 12px; letter-spacing: -.02em; position: relative;
     }
-    .final-cta p {
-      font-size: 1.0rem;
-      opacity: .88;
-      margin-bottom: 40px;
-      line-height: 2.0;
-      position: relative;
-    }
-    .final-cta .cta-btn {
-      background: white;
-      color: var(--green);
-      box-shadow: 0 6px 28px rgba(0,0,0,.2);
-    }
+    .final-cta p { font-size: 0.97rem; opacity: .88; margin-bottom: 36px; line-height: 2.0; position: relative; }
+    .final-cta .cta-btn { background: white; color: var(--green); box-shadow: 0 6px 24px rgba(0,0,0,.18); }
     .final-cta .cta-btn:hover { background: #f0fdf4; }
-    .final-cta .cta-note { color: rgba(255,255,255,.65); margin-top: 16px; font-size: 0.9rem; }
+    .final-cta .cta-note { color: rgba(255,255,255,.6); margin-top: 14px; font-size: 0.86rem; }
 
     /* ── Footer ── */
-    footer { background: #111827; color: #6b7280; text-align: center; padding: 28px 20px; font-size: 0.82rem; }
+    footer { background: #111827; color: #6b7280; text-align: center; padding: 24px 20px; font-size: 0.8rem; }
 
     /* ── Mobile ── */
     @media (max-width: 680px) {
-      body { font-size: 18px; }
-
+      body { font-size: 16px; }
       .hero { padding: 52px 20px 48px; }
       .hero h1 br { display: none; }
-      .hero-inner {
-        grid-template-columns: 1fr;
-        gap: 40px;
-      }
+      .hero-inner { grid-template-columns: 1fr; gap: 36px; }
       .phone-wrap { order: -1; }
-      .phone-frame { width: 200px; }
-
+      .phone-frame { width: 190px; }
+      .how-wrap { grid-template-columns: 1fr; gap: 40px; }
       .ba-row { grid-template-columns: 1fr; }
       .ba-arrow { display: none; }
-      .roi-grid { grid-template-columns: 1fr; }
-      .roi-eq { display: none; }
-
-      .why-us-header { grid-template-columns: 1fr; text-align: center; }
-      .why-us-box { padding: 24px 18px; }
-      .roi-box { padding: 28px 20px; }
-      .beta-invite { padding: 28px 20px; }
-      .feature-item { grid-template-columns: 1fr; }
-      .trust-strip-inner { gap: 24px; }
-      .compare-table th, .compare-table td { padding: 12px 8px; font-size: 0.88rem; }
+      .why-header { grid-template-columns: 1fr; text-align: center; }
+      .why-box { padding: 22px 16px; }
+      .beta-invite { padding: 24px 16px; }
+      .stats-inner { grid-template-columns: repeat(2, 1fr); }
+      .stat-item:nth-child(2) { border-right: none; }
+      .stat-item:nth-child(3) { border-top: 1px solid var(--border); }
+      .stat-item:nth-child(4) { border-top: 1px solid var(--border); border-right: none; }
+      .stat-num { font-size: 2.0rem; }
+      .compare-table th, .compare-table td { padding: 10px 7px; font-size: 0.85rem; }
+      .flow-step { grid-template-columns: 40px 1fr; gap: 12px; }
+      .flow-num { width: 40px; height: 40px; font-size: 0.95rem; }
+      .flow-step::before { left: 19px; top: 40px; }
+      .cta-wrap { align-items: stretch; }
+      .cta-btn { text-align: center; }
     }
   </style>
 </head>
@@ -685,206 +438,218 @@
   <a href="https://forms.gle/MMvSghpeCheXirDs7" class="nav-cta">無料ベータ（残り5社）</a>
 </nav>
 
-<!-- ヒーロー -->
+<!-- ① Hero -->
 <div class="hero">
   <div class="hero-inner">
-
-    <!-- Left: copy -->
     <div>
       <div class="hero-badge">5社限定ベータ募集中</div>
-      <h1>注文は取った。<br>でも、<em>届けられなかった</em>。</h1>
-      <p class="hero-scene">
-        電話を切ってから、紙の注文票をなくした。<br>
-        配達当日の朝、お客様から電話が来た。<strong>「まだですか？」</strong><br>
-        謝ることしかできなかった。<br><br>
-        この経験のために、HanaFlowを作りました。
-      </p>
+      <h1>LINEの注文が、<br><em>台帳に並ぶ。</em></h1>
       <p class="hero-sub">
-        電話・LINE・紙の注文が、スマホ1台に全部並ぶ。<br>「注文が消えない」仕組みを、今日から使えます。
+        AIがLINEで注文を受けて、台帳を作る。<br>
+        深夜の転記は、もうしなくていい。
       </p>
-      <a href="https://forms.gle/MMvSghpeCheXirDs7" class="cta-btn">無料ベータに申し込む</a>
-      <p class="cta-note">初期費用0円 ／ クレカ登録なし ／ いつでも停止OK ／ 所要1分</p>
+      <div class="cta-wrap">
+        <a href="https://forms.gle/MMvSghpeCheXirDs7" class="cta-btn">転記ゼロを、無料で試す（残り5社）</a>
+        <span class="cta-note">初期費用0円 ／ クレカ登録なし ／ いつでも停止OK ／ 所要1分</span>
+      </div>
     </div>
-
-    <!-- Right: phone mockup -->
     <div class="phone-wrap">
       <div class="phone-frame">
         <div class="phone-notch"></div>
         <div class="phone-screen">
           <img src="screenshots/orders_ui.png" alt="HanaFlow 受注一覧画面">
         </div>
-        <div class="phone-indicator"></div>
+        <div class="phone-bar"></div>
       </div>
     </div>
-
   </div>
 </div>
 
-<!-- 信頼ストリップ -->
-<div class="trust-strip">
-  <div class="trust-strip-inner">
-    <div class="trust-item">
-      <span class="t-num">0円</span>
-      <span class="t-label">初期費用・ベータ月額</span>
+<!-- ② Stats strip -->
+<div class="stats-strip">
+  <div class="stats-inner">
+    <div class="stat-item">
+      <span class="stat-num">30<span class="stat-unit">分</span></span>
+      <span class="stat-label">1日の転記時間が<br>ゼロになる</span>
     </div>
-    <div class="trust-item">
-      <span class="t-num">スマホだけ</span>
-      <span class="t-label">アプリ不要・ブラウザで使える</span>
+    <div class="stat-item">
+      <span class="stat-num">0<span class="stat-unit">円</span></span>
+      <span class="stat-label">初期費用・ベータ月額<br>クレカ登録も不要</span>
     </div>
-    <div class="trust-item">
-      <span class="t-num">5社限定</span>
-      <span class="t-label">一緒に育てるベータ募集中</span>
+    <div class="stat-item">
+      <span class="stat-num">5<span class="stat-unit">社</span></span>
+      <span class="stat-label">限定ベータ募集<br>埋まり次第終了</span>
     </div>
-    <div class="trust-item">
-      <span class="t-num">花屋経験者</span>
-      <span class="t-label">現場実務者が設計</span>
+    <div class="stat-item">
+      <span class="stat-num">24<span class="stat-unit">h</span></span>
+      <span class="stat-label">AIがLINE注文を受付<br>閉店後も入ってくる</span>
     </div>
   </div>
+  <p class="stats-note">＊「30分」は花屋オーナーへのヒアリングベースの推計値です</p>
 </div>
 
-<!-- 課題 -->
+<!-- ③ Pain -->
 <section id="pain">
   <div class="container">
-    <span class="section-eyebrow reveal">現場のリアル</span>
-    <h2 class="section-title reveal">こんな状況、<br>ありませんか？</h2>
-    <p class="section-lead reveal">
-      電話・LINE・紙の注文が混在すると、情報はかならずどこかで消えます。<br>
-      「うっかり」ではなく、管理場所が増えるほど起きる、仕組みの問題です。
-    </p>
+    <span class="section-eyebrow reveal">こんな店に向いています</span>
+    <h2 class="section-title reveal">その転記、<br>いつまで続けますか？</h2>
+    <div class="pain-who reveal">
+      <span class="pain-who-tag">📱 LINEが主な受注チャネル</span>
+      <span class="pain-who-tag">📅 繁忙期に転記が追いつかない</span>
+      <span class="pain-who-tag">👤 スタッフ1〜5名の個人店</span>
+      <span class="pain-who-tag">💸 月1万円の導入を迷っている</span>
+    </div>
     <div class="pain-grid">
       <div class="pain-card reveal reveal-delay-1">
         <div class="pain-icon">📱</div>
-        <h3>電話・LINE・紙がバラバラ</h3>
-        <p>確認する場所が3か所以上ある。繁忙期に注意が分散して、どこかで必ず漏れる。</p>
+        <h3>LINEの転記が深夜まで続く</h3>
+        <p>電話・LINE・来店と受け口が3つある。閉店後に全部まとめて転記。母の日前週は深夜1時になる。</p>
       </div>
       <div class="pain-card reveal reveal-delay-2">
         <div class="pain-icon">🚐</div>
-        <h3>配達情報が担当者の頭の中だけ</h3>
-        <p>「あの配達、誰が行くの？」がLINEや口頭で回る。担当が休んだら情報が止まる。</p>
+        <h3>転記漏れが配達ミスになる</h3>
+        <p>「LINEで受けた注文、台帳に入れ忘れた」。気づくのは配達当日の朝、お客様の電話で。</p>
       </div>
       <div class="pain-card reveal reveal-delay-3">
         <div class="pain-icon">📁</div>
-        <h3>顧客情報がExcelに眠っている</h3>
-        <p>去年の母の日に何を頼んだか、すぐ出てこない。リピートの声かけが後手に回る。</p>
+        <h3>常連の情報が頭の中にしかない</h3>
+        <p>「去年の母の日と同じで」に即答できない。ベテランが辞めたら顧客情報も消える。</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- 解決策 -->
-<section id="solution">
+<!-- ④ How + Features（統合） -->
+<section id="how">
   <div class="container">
-    <span class="section-eyebrow reveal">HanaFlowの解決</span>
-    <h2 class="section-title reveal">「1か所に集める」<br>それだけで、漏れはなくなる</h2>
+    <span class="section-eyebrow reveal">仕組みと機能</span>
+    <h2 class="section-title reveal">LINEで来たら、AIが受けて、<br>台帳に並ぶ</h2>
     <p class="section-lead reveal">
-      花屋の現場を熟知した設計者が、課題を逆算して作りました。<br>
-      「かっこいい機能」より「今日の受注が消えない仕組み」を優先しています。
+      難しい設定はありません。LINE公式アカウントとつなぐだけ。<br>
+      あとはAIが全部やります。
     </p>
-    <div class="feature-list">
-      <div class="feature-item reveal">
-        <div class="feature-num">1</div>
-        <div>
-          <h3>受注を即登録・即確認</h3>
-          <p>電話を切りながらスマホで登録。紙に書いて後でまとめて入力する二度手間をなくす。全注文が1画面に並ぶので「あの注文どこだっけ」がなくなる。</p>
+    <div class="how-wrap">
+      <div class="flow-steps">
+        <div class="flow-step reveal">
+          <div class="flow-num">1</div>
+          <div class="flow-content">
+            <span class="flow-tag">お客様がLINEを送る</span>
+            <h3>「注文したい」のひと言でOK</h3>
+            <p>今まで通りLINEで連絡するだけ。アプリのDLも特別な操作も不要。</p>
+          </div>
+        </div>
+        <div class="flow-step reveal">
+          <div class="flow-num">2</div>
+          <div class="flow-content">
+            <span class="flow-tag">AIが4問で情報を集める</span>
+            <h3>予算・用途・納期・好みを確認</h3>
+            <p>AIがボタン選択で質問する。お客様は選ぶだけ。「花が分からない」を解決しながら注文情報を収集。</p>
+          </div>
+        </div>
+        <div class="flow-step reveal">
+          <div class="flow-num">3</div>
+          <div class="flow-content">
+            <span class="flow-tag">AIが花を提案・確定</span>
+            <h3>提案→承認で注文確定</h3>
+            <p>回答をもとにAIが提案文を生成。お客様が承認したら注文確定。</p>
+          </div>
+        </div>
+        <div class="flow-step reveal">
+          <div class="flow-num">4</div>
+          <div class="flow-content">
+            <span class="flow-tag">台帳に自動登録</span>
+            <h3>転記ゼロ。台帳に並ぶ。</h3>
+            <p>あなたが何もしなくても受注一覧に注文が並ぶ。深夜の転記は今日で終わり。</p>
+          </div>
         </div>
       </div>
-      <div class="feature-item reveal">
-        <div class="feature-num">2</div>
-        <div>
-          <h3>納品日で絞り込み、前日確認が30秒で終わる</h3>
-          <p>「明日の配達、何件？」が画面を開いて3秒で分かる。担当者が休んでも、誰でも同じ情報を見られる。属人化が消える。</p>
+
+      <div class="feature-list">
+        <div class="feature-item highlight reveal">
+          <div class="feature-num">①</div>
+          <div>
+            <span class="feature-badge">最大の差別化</span>
+            <h3>LINE注文をAIが自動で台帳登録</h3>
+            <p>競合他社はこの機能を持っていない。転記の手間がゼロになる。</p>
+          </div>
         </div>
-      </div>
-      <div class="feature-item reveal">
-        <div class="feature-num">3</div>
-        <div>
-          <h3>顧客履歴がすぐ出てくる</h3>
-          <p>名前で検索すれば、前回の注文・金額・メモが出てくる。「去年の母の日と同じで」という電話に即対応できる。</p>
+        <div class="feature-item reveal">
+          <div class="feature-num">②</div>
+          <div>
+            <h3>全注文が1画面・納品日で絞り込み</h3>
+            <p>電話・LINE・来店どこで受けても同じ画面に並ぶ。「明日の配達、何件？」が3秒で分かる。</p>
+          </div>
+        </div>
+        <div class="feature-item reveal">
+          <div class="feature-num">③</div>
+          <div>
+            <h3>顧客履歴が名前で3秒で出る</h3>
+            <p>常連の好み・予算・過去の注文が残る。ベテランが辞めても情報は消えない。</p>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ベネフィット -->
+<!-- ⑤ Before / After -->
 <section id="benefit">
   <div class="container">
     <span class="section-eyebrow reveal">あなたの店の変化</span>
-    <h2 class="section-title reveal">「受注が消えない」と<br>何が変わるか</h2>
-    <p class="section-lead reveal">機能の話はここまで。あなたの店が具体的にどう変わるかだけ書きます。</p>
+    <h2 class="section-title reveal">転記がなくなると、<br>何が変わるか</h2>
     <div class="ba-grid">
       <div class="ba-row reveal">
         <div class="ba-side before">
           <p class="ba-label before">BEFORE</p>
-          <p class="ba-text">配達漏れが翌朝に発覚。「配達まだですか？」の電話でその日が始まる。</p>
+          <p class="ba-text">閉店後にLINEを見返して台帳に転記。母の日前週は深夜1時まで続く。</p>
         </div>
         <div class="ba-arrow">→</div>
         <div class="ba-side after">
           <p class="ba-label after">AFTER</p>
-          <p class="ba-text">前日に「明日ぶん」を一覧確認。漏れがゼロになる。</p>
+          <p class="ba-text">AIが自動で台帳に登録。閉店後は何もしなくていい。</p>
         </div>
       </div>
       <div class="ba-row reveal">
         <div class="ba-side before">
           <p class="ba-label before">BEFORE</p>
-          <p class="ba-text">「去年と同じで」と言われても、去年の注文がExcelのどこにあるか探せない。</p>
+          <p class="ba-text">転記漏れが配達ミスになる。「まだですか？」の電話でその日が始まる。</p>
         </div>
         <div class="ba-arrow">→</div>
         <div class="ba-side after">
           <p class="ba-label after">AFTER</p>
-          <p class="ba-text">名前で検索すれば前回の注文・金額が3秒で出る。提案の質が上がる。</p>
+          <p class="ba-text">LINEから台帳まで自動。前日に「明日ぶん」を確認するだけ。</p>
         </div>
       </div>
       <div class="ba-row reveal">
         <div class="ba-side before">
           <p class="ba-label before">BEFORE</p>
-          <p class="ba-text">繁忙期の前週、注文が集中して頭がパンク。何件あるかも把握できない。</p>
+          <p class="ba-text">「花が分からない」お客様への対応が閉店後も続く。</p>
         </div>
         <div class="ba-arrow">→</div>
         <div class="ba-side after">
           <p class="ba-label after">AFTER</p>
-          <p class="ba-text">全注文が1画面。受注集中日でも、落ち着いて1件ずつ確認できる。</p>
+          <p class="ba-text">AIが24時間、質問しながら注文を取る。閉店後も注文が入る。</p>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ROI -->
-<section id="roi">
-  <div class="container">
-    <span class="section-eyebrow reveal">コストの根拠</span>
-    <h2 class="section-title reveal">月額9,800円が<br>回収できる理由</h2>
-    <p class="section-lead reveal">数字で考えてみてください。</p>
-    <div class="roi-box reveal">
-      <p class="roi-title">受注漏れ1件の損失 vs HanaFlowの月額</p>
-      <div class="roi-grid">
-        <div class="roi-item">
-          <span class="roi-num">5,000円〜</span>
-          <span class="roi-sub">受注漏れ1件あたりの損失<br>（客単価ベース）</span>
-        </div>
-        <div class="roi-eq">×</div>
-        <div class="roi-item">
-          <span class="roi-num">月2件</span>
-          <span class="roi-sub">繁忙期に防げる<br>漏れの目安</span>
-        </div>
-      </div>
-      <div class="roi-conclusion">
-        受注漏れを月2件防ぐだけで、HanaFlowの月額（9,800円）は回収できます。<br>
-        <span style="font-size:.88rem;opacity:.8;font-weight:400;">＊「クレームへの対応時間」「信頼の損失」は含んでいません</span>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- ⑥ Mid CTA（独立） -->
+<div class="mid-cta">
+  <p class="mc-lead">「うちのことだ」と思ったら、まず試してください。</p>
+  <p class="mc-sub">5社限定・初期費用ゼロ・クレカ登録なし。損をする仕組みが一切ない。</p>
+  <a href="https://forms.gle/MMvSghpeCheXirDs7" class="cta-btn">転記ゼロを、無料で試す（残り5社）</a>
+</div>
 
-<!-- 比較表 -->
+<!-- ⑦ Compare -->
 <section id="compare">
   <div class="container">
     <span class="section-eyebrow reveal">他ツールとの違い</span>
-    <h2 class="section-title reveal">既存ツールが刺さらない理由</h2>
+    <h2 class="section-title reveal">LINE対応は、<br>HanaFlowだけ</h2>
     <p class="section-lead reveal">
-      既存ツールは「高すぎる」か「花屋に刺さらない」かの二択でした。<br>
-      HanaFlowは現場の課題から逆算して、余計な機能を削っています。
+      花屋の受注チャネルの中心はLINEになっている。<br>
+      でも既存ツールはLINEに対応していない。そこが空白地帯でした。
     </p>
     <div class="compare-wrap reveal">
       <table class="compare-table">
@@ -892,12 +657,19 @@
           <tr>
             <th style="text-align:left;">比較項目</th>
             <th class="hana">HanaFlow</th>
-            <th>花屋特化ツールA</th>
-            <th>花屋特化ツールB</th>
+            <th>花屋向けツールA</th>
+            <th>花屋向けツールB</th>
             <th>Excel・紙</th>
           </tr>
         </thead>
         <tbody>
+          <tr class="hl">
+            <td>LINEで注文受付〜台帳登録</td>
+            <td class="check hana">✓ AI自動</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+          </tr>
           <tr>
             <td>初期費用</td>
             <td class="check hana">0円</td>
@@ -907,23 +679,16 @@
           </tr>
           <tr>
             <td>月額（最安）</td>
-            <td class="hana">ベータ：<strong>無料</strong><br><small style="color:#888">→ 9,800円〜</small></td>
-            <td>10,000円〜</td>
-            <td>10,000円〜</td>
+            <td class="hana">ベータ：<strong>無料</strong><br><small style="color:#aaa">→ 9,800円〜</small></td>
+            <td>10,000円前後</td>
+            <td>10,000円前後</td>
             <td>0円</td>
           </tr>
           <tr>
             <td>スマホで受注登録</td>
             <td class="check hana">✓</td>
+            <td class="delta">△ PC中心</td>
             <td class="check">✓</td>
-            <td class="check">✓</td>
-            <td class="cross">✗</td>
-          </tr>
-          <tr>
-            <td>納品日絞り込み</td>
-            <td class="check hana">✓</td>
-            <td class="delta">△</td>
-            <td class="delta">△</td>
             <td class="cross">✗</td>
           </tr>
           <tr>
@@ -943,74 +708,73 @@
         </tbody>
       </table>
     </div>
+    <p class="roi-note reveal">
+      <strong>月額9,800円の元は取れますか？</strong><br>
+      受注漏れを月2件防ぐだけで月額分の価値があります。転記作業が月10時間なくなれば、それだけで十分です。
+    </p>
   </div>
 </section>
 
-<!-- なぜHanaFlowか -->
+<!-- ⑧ Why Us -->
 <section id="about">
   <div class="container">
     <span class="section-eyebrow reveal">なぜHanaFlowか</span>
-    <h2 class="section-title reveal" style="margin-bottom:32px;">
-      花屋の現場で「注文票をなくして<br>クレームになった」側が作りました
-    </h2>
-    <div class="why-us-box reveal">
-      <div class="why-us-header">
+    <h2 class="section-title reveal" style="margin-bottom:28px;">転記で深夜まで残った側が<br>作りました</h2>
+    <div class="why-box reveal">
+      <div class="why-header">
         <div class="founder-avatar">🌸</div>
         <div>
           <p class="founder-name">HanaFlowについて</p>
-          <p class="founder-title">花屋の現場を知る人間が設計</p>
+          <p class="founder-title">花屋・農業・小売・イベント運営の現場経験者が設計</p>
         </div>
       </div>
-      <p class="why-us-body">
+      <p class="why-body">
         花屋向けと言うために作ったのではありません。<br>
-        <strong>紙の注文票をなくして、お客様に「まだですか？」と言われた人間が設計しています。</strong><br>
-        どこで情報が消えるかを体で知っているから、「消えない仕組み」だけを優先しました。<br>
-        既存ツールは高すぎ、汎用ツールは花屋業務に合わない——だから自分で作りました。
+        <strong>LINEで受けた注文を転記しながら「もうやめたい」と思った人間が設計しています。</strong><br>
+        どこで情報が消えるかを体で知っているから、「AIに転記させる」という発想が生まれた。
       </p>
       <div class="why-reasons">
         <div class="why-reason">
           <div class="why-reason-icon">🔧</div>
           <div class="why-reason-text">
             <strong>現場経験者が設計</strong>
-            机上の理屈ではなく「実際に受注をやらかした人間」の目線で作っています。どこで漏れるかを体で知っている。
+            「実際にやらかした人間」の目線で作っています。どこで漏れるかを体で知っている。
           </div>
         </div>
         <div class="why-reason">
           <div class="why-reason-icon">💰</div>
           <div class="why-reason-text">
             <strong>初期費用ゼロ・ベータ期間は月額も無料</strong>
-            導入のハードルを最初から外しています。合わなければ止めればいい。損をする仕組みが一切ない。
+            合わなければ止めればいい。損をする仕組みが一切ない。
           </div>
         </div>
         <div class="why-reason">
           <div class="why-reason-icon">📱</div>
           <div class="why-reason-text">
-            <strong>スマホだけで使える・覚えることが少ない</strong>
+            <strong>スマホだけ・覚えることが少ない</strong>
             多機能で挫折させない。PCが苦手なスタッフでも使える画面だけを残しました。
           </div>
         </div>
       </div>
     </div>
-
     <div class="beta-invite reveal">
       <p class="bi-title">一緒に作ってくれる5社を探しています</p>
       <p class="bi-body">
         HanaFlowはまだ完成品ではありません。<br>
-        ベータ参加店には、要望を直接ぶつけられる窓口と、正式版での優遇をご用意します。<br>
-        「うちの困りごとをツールに反映させたい」という店に向いています。
+        ベータ参加店には、要望を直接ぶつけられる窓口と、正式版での優遇をご用意します。
       </p>
-      <a href="https://forms.gle/MMvSghpeCheXirDs7" class="cta-btn">無料ベータに申し込む（残り5社）</a>
-      <p class="cta-note" style="margin-top:14px;color:var(--text-sub);">初期費用0円 ／ クレカ登録なし ／ いつでも停止OK</p>
+      <a href="https://forms.gle/MMvSghpeCheXirDs7" class="cta-btn">転記ゼロを、無料で試す（残り5社）</a>
+      <p class="cta-note" style="margin-top:12px;color:var(--text-sub);">初期費用0円 ／ クレカ登録なし ／ いつでも停止OK</p>
     </div>
   </div>
 </section>
 
-<!-- 料金 -->
+<!-- ⑨ Pricing -->
 <section id="pricing">
   <div class="container">
     <span class="section-eyebrow reveal">料金</span>
     <h2 class="section-title reveal">初期費用ゼロ。<br>使った月だけ払う</h2>
-    <p class="section-lead reveal">ベータ期間は完全無料。じっくりお試しいただき、率直なご意見をください。</p>
+    <p class="section-lead reveal">ベータ期間は完全無料。LINE連携を含む全機能を試せます。</p>
     <div class="pricing-grid">
       <div class="pricing-card featured reveal">
         <span class="pricing-badge">今だけ・5社限定</span>
@@ -1018,8 +782,9 @@
         <p class="pricing-price">¥0<span>/月</span></p>
         <p class="pricing-desc">フィードバック提供者限定<br>事例掲載にご協力ください</p>
         <ul class="pricing-features">
+          <li>LINE注文AI自動登録</li>
           <li>受注作成・一覧・詳細</li>
-          <li>顧客管理（名前・電話・LINE表示名・メモ）</li>
+          <li>顧客管理（名前・電話・LINE・メモ）</li>
           <li>納品日・ステータス管理</li>
           <li>CSV出力</li>
           <li>スマホ完全対応</li>
@@ -1028,7 +793,7 @@
       <div class="pricing-card reveal reveal-delay-1">
         <p class="pricing-name">START</p>
         <p class="pricing-price">¥9,800<span>/月</span></p>
-        <p class="pricing-desc">1店舗で受注と顧客管理を<br>整えたい店向け</p>
+        <p class="pricing-desc">受注・顧客・LINE台帳を<br>1つにまとめたい店向け</p>
         <ul class="pricing-features">
           <li>ベータ機能すべて</li>
           <li>優先サポート</li>
@@ -1038,12 +803,12 @@
       <div class="pricing-card reveal reveal-delay-2">
         <p class="pricing-name">PRO</p>
         <p class="pricing-price">¥14,800<span>/月</span></p>
-        <p class="pricing-desc">配達・請求・LINE連携まで<br>使いたい店向け（フェーズ2〜）</p>
+        <p class="pricing-desc">配達管理・請求まで<br>完結させたい店向け</p>
         <ul class="pricing-features">
           <li>STARTの全機能</li>
           <li>配達台帳</li>
           <li>見積・請求書出力</li>
-          <li>LINE注文連携（予定）</li>
+          <li>複数スタッフアカウント</li>
         </ul>
       </div>
     </div>
@@ -1054,19 +819,23 @@
   </div>
 </section>
 
-<!-- FAQ -->
+<!-- ⑩ FAQ -->
 <section id="faq">
   <div class="container">
     <span class="section-eyebrow reveal">よくある質問</span>
-    <h2 class="section-title reveal" style="text-align:center;margin-bottom:36px;">導入前に気になること</h2>
+    <h2 class="section-title reveal" style="text-align:center;margin-bottom:32px;">導入前に気になること</h2>
     <div class="faq-list">
       <details class="reveal">
+        <summary>LINEの注文はどうやって台帳に入るのですか？</summary>
+        <div class="faq-body">HanaFlowとLINE公式アカウントをつなぐと、お客様からLINEに「注文したい」と来たときにAIが自動で応答します。AIが4問で情報を集め、花を提案。お客様が承認したら台帳に自動登録されます。あなたの手作業はゼロです。</div>
+      </details>
+      <details class="reveal">
         <summary>PCが苦手でも使えますか？</summary>
-        <div class="faq-body">スマホだけで完結するよう設計しています。アプリのダウンロードも不要です。ブラウザを開くだけで使えます。電話を受けながら入力できる画面を目指しています。</div>
+        <div class="faq-body">スマホだけで完結するよう設計しています。アプリのダウンロードも不要です。ブラウザを開くだけで使えます。</div>
       </details>
       <details class="reveal">
         <summary>今使っているExcelやLINEはどうなりますか？</summary>
-        <div class="faq-body">移行は段階的でかまいません。「電話注文だけHanaFlowに入れる」という使い方から始めて、慣れたら全部移す。それくらいの軽さで始めてください。</div>
+        <div class="faq-body">移行は段階的でかまいません。LINEはそのまま使い続けられます。お客様はこれまで通りLINEで連絡するだけ。HanaFlow側で自動的に台帳に取り込みます。</div>
       </details>
       <details class="reveal">
         <summary>データが消えたりしませんか？</summary>
@@ -1077,10 +846,6 @@
         <div class="faq-body">されません。正式版へ移る際は必ず事前にご案内し、ご了承いただいてから移行します。クレカ登録も不要です。</div>
       </details>
       <details class="reveal">
-        <summary>今は受注管理だけですか？他の機能は？</summary>
-        <div class="faq-body">フェーズ0（現在）は受注台帳と顧客管理に絞っています。配達台帳・廃棄管理・LINE連携はフェーズ2以降で追加予定です。ベータユーザーの要望を優先して開発します。</div>
-      </details>
-      <details class="reveal">
         <summary>合わなかったらすぐ止められますか？</summary>
         <div class="faq-body">はい。いつでも停止できます。違約金も縛りもありません。ベータ期間は月額も0円なので、損をする仕組みが一切ありません。</div>
       </details>
@@ -1088,17 +853,16 @@
   </div>
 </section>
 
-<!-- 最終CTA -->
-<div class="final-cta" id="apply">
+<!-- Final CTA -->
+<div class="final-cta">
   <div class="container">
-    <h2>父の日まであと2週間。<br>漏れゼロで迎えませんか？</h2>
+    <h2>LINEの転記から<br>解放される日を、始めませんか。</h2>
     <p>
       無料ベータは5社限定。初期費用ゼロ、いつでも解約できます。<br>
-      「ちょっと試してみよう」くらいの気持ちで申し込んでください。<br>
-      申込後48時間以内にご連絡します。
+      「深夜の転記、なくしたい」と思ったら、まず1分で申し込んでください。
     </p>
-    <a href="https://forms.gle/MMvSghpeCheXirDs7" class="cta-btn">無料ベータに申し込む（残り5社）</a>
-    <p class="cta-note">初期費用0円 ／ クレカ登録なし ／ いつでも停止OK ／ 所要1分</p>
+    <a href="https://forms.gle/MMvSghpeCheXirDs7" class="cta-btn">転記ゼロを、無料で始める（残り5社）</a>
+    <p class="cta-note">初期費用0円 ／ クレカ登録なし ／ いつでも停止OK ／ 申込後48時間以内にご連絡</p>
   </div>
 </div>
 
@@ -1107,16 +871,12 @@
 </footer>
 
 <script>
-  const observer = new IntersectionObserver((entries) => {
+  const obs = new IntersectionObserver((entries) => {
     entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        observer.unobserve(e.target);
-      }
+      if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
     });
-  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  }, { threshold: 0.08, rootMargin: '0px 0px -32px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 </script>
 
 </body>
