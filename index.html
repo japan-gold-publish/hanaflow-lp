@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HanaFlow — LINEの注文が、台帳に並ぶ。花屋向け受注管理ツール</title>
-  <meta name="description" content="AIがLINEで注文を受けて、台帳を作る。転記ゼロ・受注漏れゼロ。花屋の現場を知る設計者が作った受注管理ツール。無料ベータ5社限定。初期費用ゼロ。">
+  <title>HanaFlow — LINEで注文を受けている花屋さんへ</title>
+  <meta name="description" content="LINEで来た注文を、AIが受けて台帳に入れます。転記ゼロ。花屋向け受注管理ツール。無料ベータ5社限定。初期費用ゼロ。">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -99,10 +99,18 @@
     .hero-badge::before { content: '●'; font-size: .55rem; animation: blink 1.8s ease-in-out infinite; }
     @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:.25; } }
 
+    .hero-scene {
+      font-size: 1.0rem; color: var(--text-sub);
+      line-height: 2.1; margin-bottom: 22px;
+      padding: 18px 20px; background: rgba(255,255,255,.7);
+      border-left: 3px solid var(--green-mid);
+      border-radius: 0 10px 10px 0;
+    }
+
     .hero h1 {
-      font-size: clamp(2.4rem, 6vw, 3.6rem);
+      font-size: clamp(2.2rem, 5.5vw, 3.2rem);
       font-weight: 900; letter-spacing: -.03em;
-      line-height: 1.15; margin-bottom: 18px; color: var(--text);
+      line-height: 1.2; margin-bottom: 18px; color: var(--text);
     }
     .hero h1 em {
       font-style: normal; color: var(--green); position: relative;
@@ -178,32 +186,53 @@
       line-height: 1.95; margin-bottom: 40px; max-width: 560px;
     }
 
-    /* ── Pain ── */
-    .pain-who {
-      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 36px;
-    }
-    .pain-who-tag {
-      background: var(--green-light); color: var(--green);
-      font-size: 0.85rem; font-weight: 700; padding: 5px 14px;
-      border-radius: 100px; border: 1px solid rgba(26,122,69,.15);
-    }
-    .pain-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
-    .pain-card {
-      background: white; border: 1px solid var(--border); border-radius: 14px;
-      padding: 24px 20px; position: relative; overflow: hidden;
+    /* ── Scene empathy ── */
+    .scene-list { display: grid; gap: 14px; }
+    .scene-item {
+      background: white; border: 1px solid var(--border);
+      border-radius: 14px; padding: 24px 26px;
       box-shadow: 0 2px 12px rgba(0,0,0,.04);
-      transition: transform .2s, box-shadow .2s;
+      position: relative; overflow: hidden;
     }
-    .pain-card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0;
-      height: 3px; background: var(--accent);
+    .scene-item::before {
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: var(--accent);
     }
-    .pain-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.08); }
-    .pain-icon { font-size: 1.8rem; margin-bottom: 12px; }
-    .pain-card h3 { font-size: 1.0rem; font-weight: 700; margin-bottom: 8px; }
-    .pain-card p { font-size: 0.9rem; color: var(--text-sub); line-height: 1.85; }
+    .scene-time {
+      font-size: 0.8rem; font-weight: 700; color: var(--accent);
+      letter-spacing: .08em; margin-bottom: 8px; display: block;
+    }
+    .scene-item p { font-size: 0.97rem; line-height: 2.0; color: var(--text); }
+    .scene-item p strong { color: var(--text); }
 
-    /* ── How + Features combined ── */
+    /* ── Why not solved ── */
+    .why-not {
+      background: #1a1a2e; color: white;
+      padding: 80px 24px;
+    }
+    .why-not .section-eyebrow { color: rgba(255,255,255,.5); }
+    .why-not .section-title { color: white; }
+    .why-not-body {
+      font-size: 1.05rem; line-height: 2.1;
+      color: rgba(255,255,255,.75); max-width: 640px; margin-bottom: 36px;
+    }
+    .why-not-body strong { color: white; }
+    .system-count {
+      display: inline-flex; align-items: baseline; gap: 6px;
+      background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12);
+      border-radius: 12px; padding: 20px 28px; margin-bottom: 28px;
+    }
+    .system-count-num { font-size: 3.2rem; font-weight: 900; color: var(--green-mid); letter-spacing: -.03em; }
+    .system-count-label { font-size: 0.95rem; color: rgba(255,255,255,.6); }
+    .line-zero {
+      background: rgba(229,90,43,.12); border: 1px solid rgba(229,90,43,.3);
+      border-radius: 12px; padding: 20px 24px;
+      font-size: 1.05rem; color: white; line-height: 1.8;
+    }
+    .line-zero strong { color: var(--accent); }
+
+    /* ── How + Features ── */
     .how-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
     .flow-steps { display: grid; gap: 0; }
     .flow-step {
@@ -266,6 +295,7 @@
     .ba-label.before::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); display: inline-block; }
     .ba-label.after { color: var(--green); }
     .ba-label.after::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--green); display: inline-block; }
+    .ba-time { font-size: 0.78rem; font-weight: 700; color: var(--text-sub); margin-bottom: 6px; display: block; letter-spacing: .04em; }
     .ba-text { font-size: 0.95rem; line-height: 1.85; }
     .ba-arrow { text-align: center; color: var(--text-sub); font-size: 1.1rem; }
 
@@ -296,12 +326,11 @@
     .check { color: var(--green); font-weight: 700; }
     .cross { color: #ccc; }
     .delta { color: #aaa; }
-    .roi-note {
-      margin-top: 20px; padding: 16px 20px; background: white;
+    .compare-note {
+      margin-top: 16px; padding: 14px 18px; background: white;
       border-radius: 10px; border: 1px solid var(--border);
-      font-size: 0.9rem; color: var(--text-sub); line-height: 1.8; text-align: center;
+      font-size: 0.84rem; color: var(--text-sub); line-height: 1.8;
     }
-    .roi-note strong { color: var(--text); }
 
     /* ── Why Us ── */
     .why-box {
@@ -321,7 +350,7 @@
     }
     .founder-name  { font-size: 0.95rem; font-weight: 700; color: var(--green); margin-bottom: 3px; }
     .founder-title { font-size: 0.84rem; color: var(--text-sub); line-height: 1.6; }
-    .why-body { font-size: 0.95rem; color: var(--text-sub); line-height: 2.0; margin-bottom: 22px; }
+    .why-body { font-size: 0.95rem; color: var(--text-sub); line-height: 2.1; margin-bottom: 22px; }
     .why-body strong { color: var(--text); }
     .why-reasons { display: grid; gap: 10px; }
     .why-reason {
@@ -340,6 +369,20 @@
     }
     .beta-invite p.bi-title { font-size: 1.1rem; font-weight: 700; color: var(--green); margin-bottom: 10px; }
     .beta-invite p.bi-body { font-size: 0.92rem; color: var(--text-sub); line-height: 1.95; margin-bottom: 24px; max-width: 480px; margin-left: auto; margin-right: auto; }
+
+    /* ── Risk zero ── */
+    .risk-zero {
+      background: white; padding: 80px 24px;
+    }
+    .risk-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 32px; }
+    .risk-item {
+      border: 1.5px solid var(--green); border-radius: 12px;
+      padding: 20px 18px; text-align: center;
+      background: var(--green-light);
+    }
+    .risk-item-icon { font-size: 1.6rem; margin-bottom: 8px; }
+    .risk-item h3 { font-size: 0.95rem; font-weight: 700; color: var(--green); margin-bottom: 4px; }
+    .risk-item p { font-size: 0.85rem; color: var(--text-sub); line-height: 1.7; }
 
     /* ── Pricing ── */
     .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; }
@@ -427,6 +470,8 @@
       .flow-step::before { left: 19px; top: 40px; }
       .cta-wrap { align-items: stretch; }
       .cta-btn { text-align: center; }
+      .why-not { padding: 60px 20px; }
+      .risk-list { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
@@ -442,11 +487,21 @@
 <div class="hero">
   <div class="hero-inner">
     <div>
-      <div class="hero-badge">5社限定ベータ募集中</div>
-      <h1>LINEの注文が、<br><em>台帳に並ぶ。</em></h1>
+      <div class="hero-badge">LINEで受注している花屋さんへ</div>
+
+      <div class="hero-scene reveal">
+        夜9時。閉店して、片付けをして、<br>
+        ようやく座ったところで、またLINEが鳴る。<br>
+        <br>
+        「明日、花束お願いできますか？」<br>
+        <br>
+        あなたはスマホを置かず、台帳を開く。
+      </div>
+
+      <h1>そのLINE、<br><em>まだ手で書いていますか。</em></h1>
       <p class="hero-sub">
-        AIがLINEで注文を受けて、台帳を作る。<br>
-        深夜の転記は、もうしなくていい。
+        AIがLINEで注文を受けて、台帳に入れます。<br>
+        あなたは何もしなくていい。
       </p>
       <div class="cta-wrap">
         <a href="https://forms.gle/MMvSghpeCheXirDs7" class="cta-btn">転記ゼロを、無料で試す（残り5社）</a>
@@ -470,7 +525,7 @@
   <div class="stats-inner">
     <div class="stat-item">
       <span class="stat-num">30<span class="stat-unit">分</span></span>
-      <span class="stat-label">1日の転記時間が<br>ゼロになる</span>
+      <span class="stat-label">毎日の転記時間が<br>ゼロになる</span>
     </div>
     <div class="stat-item">
       <span class="stat-num">0<span class="stat-unit">円</span></span>
@@ -488,38 +543,61 @@
   <p class="stats-note">＊「30分」は花屋オーナーへのヒアリングベースの推計値です</p>
 </div>
 
-<!-- ③ Pain -->
+<!-- ③ Scene empathy -->
 <section id="pain">
   <div class="container">
-    <span class="section-eyebrow reveal">こんな店に向いています</span>
-    <h2 class="section-title reveal">その転記、<br>いつまで続けますか？</h2>
-    <div class="pain-who reveal">
-      <span class="pain-who-tag">📱 LINEが主な受注チャネル</span>
-      <span class="pain-who-tag">📅 繁忙期に転記が追いつかない</span>
-      <span class="pain-who-tag">👤 スタッフ1〜5名の個人店</span>
-      <span class="pain-who-tag">💸 月1万円の導入を迷っている</span>
-    </div>
-    <div class="pain-grid">
-      <div class="pain-card reveal reveal-delay-1">
-        <div class="pain-icon">📱</div>
-        <h3>LINEの転記が深夜まで続く</h3>
-        <p>電話・LINE・来店と受け口が3つある。閉店後に全部まとめて転記。母の日前週は深夜1時になる。</p>
+    <span class="section-eyebrow reveal">こんな場面、ありませんか</span>
+    <h2 class="section-title reveal">LINEで受注している花屋だけが<br>知っている、あの疲れ。</h2>
+    <p class="section-lead reveal">
+      「うちだけじゃないんだ」と思ってもらえたら、<br>このページを読んだ意味があります。
+    </p>
+    <div class="scene-list">
+      <div class="scene-item reveal">
+        <span class="scene-time">📱 夜9時・閉店後</span>
+        <p>片付けが終わって、ようやく一息ついたところでLINEが来る。注文の内容を確認して、台帳を出して、手で書き写す。それが終わるころには、また次のLINEが来ている。</p>
       </div>
-      <div class="pain-card reveal reveal-delay-2">
-        <div class="pain-icon">🚐</div>
-        <h3>転記漏れが配達ミスになる</h3>
-        <p>「LINEで受けた注文、台帳に入れ忘れた」。気づくのは配達当日の朝、お客様の電話で。</p>
+      <div class="scene-item reveal reveal-delay-1">
+        <span class="scene-time">🔍 「去年と同じ感じで」</span>
+        <p>LINEでそう来るたびに、ファイルの山をひっくり返す。去年の伝票はどこだっけ。「少々お待ちください」と返信しながら、探している自分が情けなくなる。</p>
       </div>
-      <div class="pain-card reveal reveal-delay-3">
-        <div class="pain-icon">📁</div>
-        <h3>常連の情報が頭の中にしかない</h3>
-        <p>「去年の母の日と同じで」に即答できない。ベテランが辞めたら顧客情報も消える。</p>
+      <div class="scene-item reveal reveal-delay-2">
+        <span class="scene-time">🌹 母の日の前週</span>
+        <p>LINE・電話・来店が同時に来て、転記だけで深夜になる。「また来年も同じことするのか」と思いながら、今年も深夜1時に台帳を閉じる。</p>
+      </div>
+      <div class="scene-item reveal reveal-delay-3">
+        <span class="scene-time">👤 スタッフが辞めた日</span>
+        <p>あの子だけが知っていた常連の情報が、一緒に消えた。「前回はどんな花でしたか？」と聞かれるたびに、申し訳ない気持ちになる。</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ④ How + Features（統合） -->
+<!-- ④ Why not solved -->
+<div class="why-not">
+  <div class="container">
+    <span class="section-eyebrow reveal">なぜ今まで解決できなかったのか</span>
+    <h2 class="section-title reveal" style="margin-bottom:24px;">花屋向けのシステムは、<br>たくさんあります。</h2>
+    <p class="why-not-body reveal">
+      私たちは10社以上の花屋向けシステムを調べました。<br>
+      どれも、よくできています。<br>
+      顧客管理、受注管理、請求書発行。<br>
+      <strong>でも、LINEに対応しているものは、1つもありませんでした。</strong>
+    </p>
+    <div class="system-count reveal">
+      <span class="system-count-num">10</span>
+      <span class="system-count-label">社以上の花屋向けシステムを調査</span>
+    </div>
+    <div class="line-zero reveal">
+      電話・FAX・来店。それが前提の設計で止まっている。<br>
+      お客様はとっくにLINEに移行しているのに、<br>
+      システムの側がついていっていない。<br><br>
+      だから、あなたがどれだけ探しても見つからなかった。<br>
+      <strong>なかったんです、今まで。</strong>
+    </div>
+  </div>
+</div>
+
+<!-- ⑤ How + Features -->
 <section id="how">
   <div class="container">
     <span class="section-eyebrow reveal">仕組みと機能</span>
@@ -568,9 +646,9 @@
         <div class="feature-item highlight reveal">
           <div class="feature-num">①</div>
           <div>
-            <span class="feature-badge">最大の差別化</span>
+            <span class="feature-badge">唯一の機能</span>
             <h3>LINE注文をAIが自動で台帳登録</h3>
-            <p>競合他社はこの機能を持っていない。転記の手間がゼロになる。</p>
+            <p>私たちが調べた限り、この機能を持つ花屋向けシステムは他にありません。</p>
           </div>
         </div>
         <div class="feature-item reveal">
@@ -584,7 +662,7 @@
           <div class="feature-num">③</div>
           <div>
             <h3>顧客履歴が名前で3秒で出る</h3>
-            <p>常連の好み・予算・過去の注文が残る。ベテランが辞めても情報は消えない。</p>
+            <p>常連の好み・予算・過去の注文が残る。スタッフが辞めても情報は消えない。</p>
           </div>
         </div>
       </div>
@@ -592,64 +670,84 @@
   </div>
 </section>
 
-<!-- ⑤ Before / After -->
+<!-- ⑥ Before / After -->
 <section id="benefit">
   <div class="container">
-    <span class="section-eyebrow reveal">あなたの店の変化</span>
-    <h2 class="section-title reveal">転記がなくなると、<br>何が変わるか</h2>
+    <span class="section-eyebrow reveal">導入後の変化</span>
+    <h2 class="section-title reveal">あの夜9時が、<br>変わります。</h2>
     <div class="ba-grid">
       <div class="ba-row reveal">
         <div class="ba-side before">
           <p class="ba-label before">BEFORE</p>
-          <p class="ba-text">閉店後にLINEを見返して台帳に転記。母の日前週は深夜1時まで続く。</p>
+          <span class="ba-time">夜10時</span>
+          <p class="ba-text">LINEを開いて台帳に転記している。終わらない。</p>
         </div>
         <div class="ba-arrow">→</div>
         <div class="ba-side after">
           <p class="ba-label after">AFTER</p>
-          <p class="ba-text">AIが自動で台帳に登録。閉店後は何もしなくていい。</p>
+          <span class="ba-time">夜10時</span>
+          <p class="ba-text">台帳はもう埋まっている。LINEは閉じていい。</p>
         </div>
       </div>
       <div class="ba-row reveal">
         <div class="ba-side before">
           <p class="ba-label before">BEFORE</p>
-          <p class="ba-text">転記漏れが配達ミスになる。「まだですか？」の電話でその日が始まる。</p>
+          <span class="ba-time">電話口</span>
+          <p class="ba-text">「去年と同じで」に3秒固まる。ファイルをひっくり返す。</p>
         </div>
         <div class="ba-arrow">→</div>
         <div class="ba-side after">
           <p class="ba-label after">AFTER</p>
-          <p class="ba-text">LINEから台帳まで自動。前日に「明日ぶん」を確認するだけ。</p>
+          <span class="ba-time">電話口</span>
+          <p class="ba-text">名前を入れると3秒で過去の注文が出てくる。</p>
         </div>
       </div>
       <div class="ba-row reveal">
         <div class="ba-side before">
           <p class="ba-label before">BEFORE</p>
-          <p class="ba-text">「花が分からない」お客様への対応が閉店後も続く。</p>
+          <span class="ba-time">母の日前週</span>
+          <p class="ba-text">深夜1時に台帳を閉じる。また来年も同じことをする。</p>
         </div>
         <div class="ba-arrow">→</div>
         <div class="ba-side after">
           <p class="ba-label after">AFTER</p>
-          <p class="ba-text">AIが24時間、質問しながら注文を取る。閉店後も注文が入る。</p>
+          <span class="ba-time">母の日前週</span>
+          <p class="ba-text">前日に翌日ぶんを確認するだけ。</p>
+        </div>
+      </div>
+      <div class="ba-row reveal">
+        <div class="ba-side before">
+          <p class="ba-label before">BEFORE</p>
+          <span class="ba-time">スタッフが辞めた日</span>
+          <p class="ba-text">常連の情報が一緒に消えた。</p>
+        </div>
+        <div class="ba-arrow">→</div>
+        <div class="ba-side after">
+          <p class="ba-label after">AFTER</p>
+          <span class="ba-time">スタッフが辞めた日</span>
+          <p class="ba-text">何も変わらない。</p>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ⑥ Mid CTA（独立） -->
+<!-- ⑦ Mid CTA -->
 <div class="mid-cta">
   <p class="mc-lead">「うちのことだ」と思ったら、まず試してください。</p>
   <p class="mc-sub">5社限定・初期費用ゼロ・クレカ登録なし。損をする仕組みが一切ない。</p>
   <a href="https://forms.gle/MMvSghpeCheXirDs7" class="cta-btn">転記ゼロを、無料で試す（残り5社）</a>
 </div>
 
-<!-- ⑦ Compare -->
+<!-- ⑧ Compare -->
 <section id="compare">
   <div class="container">
     <span class="section-eyebrow reveal">他ツールとの違い</span>
-    <h2 class="section-title reveal">LINE対応は、<br>HanaFlowだけ</h2>
+    <h2 class="section-title reveal">私たちが調べた限り、<br>LINEに対応した花屋向けシステムは<br>ありませんでした。</h2>
     <p class="section-lead reveal">
-      花屋の受注チャネルの中心はLINEになっている。<br>
-      でも既存ツールはLINEに対応していない。そこが空白地帯でした。
+      10社以上の花屋向けシステムを実際に調査しました。<br>
+      顧客管理・受注管理・請求書。どれも備わっている。<br>
+      でも、LINEの注文を自動で台帳に入れる機能は、どこにもなかった。
     </p>
     <div class="compare-wrap reveal">
       <table class="compare-table">
@@ -657,8 +755,8 @@
           <tr>
             <th style="text-align:left;">比較項目</th>
             <th class="hana">HanaFlow</th>
-            <th>花屋向けツールA</th>
-            <th>花屋向けツールB</th>
+            <th>イージーマネージャー</th>
+            <th>F-NEXT</th>
             <th>Excel・紙</th>
           </tr>
         </thead>
@@ -674,20 +772,27 @@
             <td>初期費用</td>
             <td class="check hana">0円</td>
             <td class="check">0円</td>
-            <td class="check">0円</td>
+            <td class="cross">要問合せ</td>
             <td class="check">0円</td>
           </tr>
           <tr>
             <td>月額（最安）</td>
             <td class="hana">ベータ：<strong>無料</strong><br><small style="color:#aaa">→ 9,800円〜</small></td>
-            <td>10,000円前後</td>
-            <td>10,000円前後</td>
+            <td>10,000円</td>
+            <td>非公開（高め）</td>
             <td>0円</td>
           </tr>
           <tr>
             <td>スマホで受注登録</td>
             <td class="check hana">✓</td>
             <td class="delta">△ PC中心</td>
+            <td class="delta">△ PC中心</td>
+            <td class="cross">✗</td>
+          </tr>
+          <tr>
+            <td>顧客履歴の検索</td>
+            <td class="check hana">✓</td>
+            <td class="check">✓</td>
             <td class="check">✓</td>
             <td class="cross">✗</td>
           </tr>
@@ -698,28 +803,18 @@
             <td class="cross">✗</td>
             <td>—</td>
           </tr>
-          <tr>
-            <td>無料で全機能を試せる</td>
-            <td class="check hana">✓（ベータ）</td>
-            <td class="cross">✗</td>
-            <td class="cross">✗</td>
-            <td class="check">✓</td>
-          </tr>
         </tbody>
       </table>
     </div>
-    <p class="roi-note reveal">
-      <strong>月額9,800円の元は取れますか？</strong><br>
-      受注漏れを月2件防ぐだけで月額分の価値があります。転記作業が月10時間なくなれば、それだけで十分です。
-    </p>
+    <p class="compare-note reveal">＊2026年6月時点の調査結果です。各社の最新情報は公式サイトをご確認ください。</p>
   </div>
 </section>
 
-<!-- ⑧ Why Us -->
+<!-- ⑨ Why Us -->
 <section id="about">
   <div class="container">
-    <span class="section-eyebrow reveal">なぜHanaFlowか</span>
-    <h2 class="section-title reveal" style="margin-bottom:28px;">転記で深夜まで残った側が<br>作りました</h2>
+    <span class="section-eyebrow reveal">なぜ作ったのか</span>
+    <h2 class="section-title reveal" style="margin-bottom:28px;">転記しながら、<br>「誰かがやってくれたら」と<br>何度思ったか。</h2>
     <div class="why-box reveal">
       <div class="why-header">
         <div class="founder-avatar">🌸</div>
@@ -730,8 +825,10 @@
       </div>
       <p class="why-body">
         花屋向けと言うために作ったのではありません。<br>
-        <strong>LINEで受けた注文を転記しながら「もうやめたい」と思った人間が設計しています。</strong><br>
-        どこで情報が消えるかを体で知っているから、「AIに転記させる」という発想が生まれた。
+        <strong>LINEで来た注文を台帳に転記しながら、「これ、誰かが自動でやってくれたら」と思い続けた人間が設計しています。</strong><br><br>
+        既存のシステムを全部試しました。どれも、LINEのことは考えていなかった。<br>
+        だから、作ることにしました。<br>
+        どこで情報が消えるかを体で知っているから、防げる設計ができる。
       </p>
       <div class="why-reasons">
         <div class="why-reason">
@@ -769,7 +866,38 @@
   </div>
 </section>
 
-<!-- ⑨ Pricing -->
+<!-- ⑩ Risk zero -->
+<div class="risk-zero">
+  <div class="container">
+    <span class="section-eyebrow reveal">リスクについて</span>
+    <h2 class="section-title reveal" style="text-align:center;">損をする仕組みが、<br>一切ありません。</h2>
+    <p class="section-lead reveal" style="margin:0 auto 0; text-align:center;">「合わなかったら」という不安に、先にお答えします。</p>
+    <div class="risk-list reveal">
+      <div class="risk-item">
+        <div class="risk-item-icon">🚫</div>
+        <h3>初期費用ゼロ</h3>
+        <p>導入にお金はかかりません</p>
+      </div>
+      <div class="risk-item">
+        <div class="risk-item-icon">📅</div>
+        <h3>ベータ期間は月額ゼロ</h3>
+        <p>使っている間は無料です</p>
+      </div>
+      <div class="risk-item">
+        <div class="risk-item-icon">💳</div>
+        <h3>クレカ登録なし</h3>
+        <p>カード情報の入力は不要です</p>
+      </div>
+      <div class="risk-item">
+        <div class="risk-item-icon">🚪</div>
+        <h3>いつでも停止OK</h3>
+        <p>違約金も縛りもありません</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ⑪ Pricing -->
 <section id="pricing">
   <div class="container">
     <span class="section-eyebrow reveal">料金</span>
@@ -819,12 +947,16 @@
   </div>
 </section>
 
-<!-- ⑩ FAQ -->
+<!-- ⑫ FAQ -->
 <section id="faq">
   <div class="container">
     <span class="section-eyebrow reveal">よくある質問</span>
     <h2 class="section-title reveal" style="text-align:center;margin-bottom:32px;">導入前に気になること</h2>
     <div class="faq-list">
+      <details class="reveal">
+        <summary>LINEの注文だけに対応しているのですか？</summary>
+        <div class="faq-body">現在、自動で台帳に入るのはLINEからの注文です。電話・来店からの注文は、スマホから手動で入力できます。全ての注文が同じ台帳に集まるので、「どこで受けたか」を気にせず管理できます。</div>
+      </details>
       <details class="reveal">
         <summary>LINEの注文はどうやって台帳に入るのですか？</summary>
         <div class="faq-body">HanaFlowとLINE公式アカウントをつなぐと、お客様からLINEに「注文したい」と来たときにAIが自動で応答します。AIが4問で情報を集め、花を提案。お客様が承認したら台帳に自動登録されます。あなたの手作業はゼロです。</div>
@@ -836,10 +968,6 @@
       <details class="reveal">
         <summary>今使っているExcelやLINEはどうなりますか？</summary>
         <div class="faq-body">移行は段階的でかまいません。LINEはそのまま使い続けられます。お客様はこれまで通りLINEで連絡するだけ。HanaFlow側で自動的に台帳に取り込みます。</div>
-      </details>
-      <details class="reveal">
-        <summary>データが消えたりしませんか？</summary>
-        <div class="faq-body">クラウド保存です。スマホを落としてもPCが壊れても、データは消えません。CSV出力もできるので手元にバックアップを取ることもできます。</div>
       </details>
       <details class="reveal">
         <summary>ベータが終わったら自動で課金されますか？</summary>
@@ -856,10 +984,10 @@
 <!-- Final CTA -->
 <div class="final-cta">
   <div class="container">
-    <h2>LINEの転記から<br>解放される日を、始めませんか。</h2>
+    <h2>今年の母の日、<br>去年と同じにしますか。</h2>
     <p>
-      無料ベータは5社限定。初期費用ゼロ、いつでも解約できます。<br>
-      「深夜の転記、なくしたい」と思ったら、まず1分で申し込んでください。
+      花が好きで、この仕事を続けている。それだけで十分です。<br>
+      転記に使っていた時間を、好きなことに使ってください。
     </p>
     <a href="https://forms.gle/MMvSghpeCheXirDs7" class="cta-btn">転記ゼロを、無料で始める（残り5社）</a>
     <p class="cta-note">初期費用0円 ／ クレカ登録なし ／ いつでも停止OK ／ 申込後48時間以内にご連絡</p>
