@@ -63,6 +63,7 @@
     .hero-inner { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: 1fr 240px; gap: 56px; align-items: center; }
     .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: var(--green-pale); border: 1px solid var(--green-light); color: var(--green); font-size: 13px; font-weight: 700; padding: 5px 14px; border-radius: 100px; margin-bottom: 24px; letter-spacing: 0.07em; }
     .hero h1 { font-size: clamp(32px, 4.2vw, 52px); font-weight: 800; line-height: 1.2; letter-spacing: -0.03em; color: var(--text); margin-bottom: 20px; }
+    .sp-br { display: none; }
     .hero-sub { font-size: 19px; color: var(--text-2); line-height: 1.9; margin-bottom: 36px; }
     .hero-ctas { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 14px; }
     .hero-note { font-size: 14px; color: var(--text-3); }
@@ -268,6 +269,7 @@
       .step::before { left: 23px; top: 48px; }
       .ba-table th, .ba-table td { padding: 10px 10px; font-size: 14px; }
       .phone-frame { width: 190px; }
+      .sp-br { display: block; }
     }
   </style>
 </head>
@@ -291,7 +293,7 @@
     <div>
       <div class="hero-eyebrow rv">転記に追われている花屋さんへ</div>
 
-      <h1 class="rv">転記が、消える。<br>LINEも電話も、台帳に並ぶ。</h1>
+      <h1 class="rv">転記が、消える。<br>LINEも電話も、<br class="sp-br">台帳に並ぶ。</h1>
 
       <p class="hero-sub rv">
         電話、LINE、来店。どこから来ても転記は続く。<br>
