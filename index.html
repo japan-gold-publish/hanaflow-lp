@@ -59,8 +59,8 @@
     .nav-actions { display: flex; align-items: center; gap: 10px; }
 
     /* ── Hero（白背景・2カラム） ── */
-    .hero { background: var(--white); padding: 72px 40px 80px; }
-    .hero-inner { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: 1fr 360px; gap: 56px; align-items: center; }
+    .hero { background: var(--white); padding: 72px 40px 64px; }
+    .hero-inner { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: 1fr 360px; gap: 56px; align-items: start; }
     .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: var(--green-pale); border: 1px solid var(--green-light); color: var(--green); font-size: 13px; font-weight: 700; padding: 5px 14px; border-radius: 100px; margin-bottom: 24px; letter-spacing: 0.07em; }
     .hero h1 { font-size: clamp(32px, 4.2vw, 52px); font-weight: 800; line-height: 1.2; letter-spacing: -0.03em; color: var(--text); margin-bottom: 20px; }
     .hero-sub { font-size: 19px; color: var(--text-2); line-height: 1.9; margin-bottom: 36px; }
@@ -80,9 +80,9 @@
     .screen-body img { width: 100%; display: block; }
 
     /* trust badge */
-    .trust-row { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; padding: 20px 0; border-top: 1px solid var(--border); margin-top: 24px; }
-    .trust-item { display: flex; align-items: center; gap: 7px; font-size: 15px; color: var(--text-3); font-weight: 600; }
-    .trust-item::before { content: '✓'; color: var(--green); font-weight: 700; font-size: 13px; }
+    .trust-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px 12px; padding: 18px 0; border-top: 1px solid var(--border); margin-top: 24px; }
+    .trust-item { display: flex; align-items: center; gap: 7px; font-size: 14px; color: var(--text-3); font-weight: 600; line-height: 1.5; }
+    .trust-item::before { content: '✓'; color: var(--green); font-weight: 700; font-size: 13px; flex-shrink: 0; }
 
     /* ── Stats ── */
     .stats-bar { background: var(--bg); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 40px 40px; }
@@ -90,12 +90,12 @@
     .stat-item { background: var(--white); padding: 28px 20px; text-align: center; }
     .stat-num  { font-size: clamp(30px, 3.5vw, 44px); font-weight: 900; color: var(--green); line-height: 1; letter-spacing: -0.03em; display: block; }
     .stat-unit { font-size: 15px; font-weight: 700; color: var(--green); }
-    .stat-lbl  { font-size: 12px; color: var(--text-3); margin-top: 8px; line-height: 1.6; display: block; }
-    .stats-note { text-align: center; font-size: 12px; color: var(--text-3); margin-top: 12px; max-width: 1120px; margin-left: auto; margin-right: auto; }
+    .stat-lbl  { font-size: 14px; color: var(--text-3); margin-top: 8px; line-height: 1.6; display: block; }
+    .stats-note { text-align: center; font-size: 13px; color: var(--text-3); margin-top: 12px; max-width: 1120px; margin-left: auto; margin-right: auto; }
 
     /* ── Sections ── */
-    .section { padding: 88px 40px; }
-    .section.tight { padding: 64px 40px; }
+    .section { padding: 72px 40px; }
+    .section.tight { padding: 52px 40px; }
     .sec-white { background: var(--white); }
     .sec-gray  { background: var(--bg); }
     .sec-pale  { background: var(--green-pale); }
@@ -117,7 +117,7 @@
     .problem-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
     .problem-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 12px; padding: 24px; box-shadow: 0 1px 4px rgba(0,0,0,.05); }
     .pc-icon  { font-size: 22px; margin-bottom: 12px; }
-    .pc-when  { font-size: 11px; font-weight: 700; letter-spacing: .1em; color: var(--text-3); margin-bottom: 8px; display: block; }
+    .pc-when  { font-size: 13px; font-weight: 700; letter-spacing: .08em; color: var(--text-3); margin-bottom: 8px; display: block; }
     .pc-title { font-size: 17px; font-weight: 700; margin-bottom: 8px; line-height: 1.4; }
     .pc-body  { font-size: 16px; color: var(--text-2); line-height: 1.85; }
 
@@ -147,30 +147,30 @@
     .cred-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 12px; padding: 26px 22px; }
     .cred-num  { font-size: 40px; font-weight: 900; color: var(--green); line-height: 1; letter-spacing: -0.03em; margin-bottom: 6px; }
     .cred-unit { font-size: 16px; font-weight: 700; color: var(--green); }
-    .cred-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
-    .cred-body  { font-size: 13px; color: var(--text-3); line-height: 1.75; }
+    .cred-title { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .cred-body  { font-size: 15px; color: var(--text-3); line-height: 1.8; }
 
     /* ── Before/After ── */
     .ba-table { width: 100%; border-collapse: collapse; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-    .ba-table th, .ba-table td { padding: 13px 18px; border-bottom: 1px solid var(--border); font-size: 14px; line-height: 1.7; vertical-align: top; }
+    .ba-table th, .ba-table td { padding: 14px 18px; border-bottom: 1px solid var(--border); font-size: 16px; line-height: 1.75; vertical-align: top; }
     .ba-table tbody tr:last-child td { border-bottom: none; }
-    .ba-table thead th { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-align: center; background: var(--bg); padding: 11px 18px; }
+    .ba-table thead th { font-size: 14px; font-weight: 700; letter-spacing: .08em; text-align: center; background: var(--bg); padding: 12px 18px; }
     .ba-table thead .th-s { text-align: left; }
     .ba-table thead .th-b { color: #b91c1c; }
     .ba-table thead .th-a { color: var(--green); }
-    .ba-table tbody td:first-child { font-weight: 600; font-size: 13px; color: var(--text-3); background: var(--bg); width: 20%; }
+    .ba-table tbody td:first-child { font-weight: 600; font-size: 15px; color: var(--text-3); background: var(--bg); width: 18%; }
     .ba-table .td-b { color: var(--text-2); }
     .ba-table .td-a { color: var(--green); font-weight: 500; }
 
     /* ── Compare ── */
     .compare-wrap { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.05); }
     .compare-scroll { overflow-x: auto; }
-    .compare-table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 540px; }
-    .compare-table th, .compare-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); text-align: center; }
+    .compare-table { width: 100%; border-collapse: collapse; font-size: 15px; min-width: 540px; }
+    .compare-table th, .compare-table td { padding: 13px 16px; border-bottom: 1px solid var(--border); text-align: center; }
     .compare-table tbody tr:last-child td { border-bottom: none; }
     .compare-table tbody tr:hover { background: var(--bg); }
-    .compare-table td:first-child { text-align: left; font-weight: 600; color: var(--text-3); font-size: 13px; }
-    .compare-table thead th { background: var(--text); color: #fff; font-weight: 700; font-size: 13px; }
+    .compare-table td:first-child { text-align: left; font-weight: 600; color: var(--text-3); font-size: 14px; }
+    .compare-table thead th { background: var(--text); color: #fff; font-weight: 700; font-size: 14px; }
     .compare-table thead .th-hana { background: var(--green); }
     .compare-table .row-hl { background: var(--green-pale); }
     .compare-table .row-hl td:first-child { color: var(--green); font-weight: 700; }
@@ -181,8 +181,8 @@
     .guar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
     .guar-card { background: var(--white); border: 1.5px solid var(--green-light); border-radius: 12px; padding: 22px 16px; text-align: center; }
     .gc-icon  { font-size: 26px; margin-bottom: 10px; }
-    .gc-title { font-size: 14px; font-weight: 700; color: var(--green-dark); line-height: 1.4; margin-bottom: 6px; }
-    .gc-body  { font-size: 12px; color: var(--text-3); line-height: 1.6; }
+    .gc-title { font-size: 16px; font-weight: 700; color: var(--green-dark); line-height: 1.4; margin-bottom: 6px; }
+    .gc-body  { font-size: 14px; color: var(--text-3); line-height: 1.65; }
 
     /* ── Pricing ── */
     .price-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
@@ -195,25 +195,25 @@
     .pc-price { font-size: 36px; font-weight: 900; color: var(--text); line-height: 1; letter-spacing: -0.03em; }
     .pc-price span { font-size: 14px; font-weight: 400; color: var(--text-3); }
     .pc-tag  { display: inline-block; background: var(--green); color: #fff; font-size: 11px; font-weight: 700; padding: 2px 10px; border-radius: 100px; margin-top: 8px; }
-    .pc-desc { font-size: 13px; color: var(--text-2); margin-top: 8px; line-height: 1.6; }
+    .pc-desc { font-size: 15px; color: var(--text-2); margin-top: 8px; line-height: 1.65; }
     .pc-list { list-style: none; padding: 16px 22px 20px; }
-    .pc-list li { padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text-2); display: flex; gap: 8px; align-items: flex-start; line-height: 1.55; }
+    .pc-list li { padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 15px; color: var(--text-2); display: flex; gap: 8px; align-items: flex-start; line-height: 1.6; }
     .pc-list li:last-child { border-bottom: none; }
     .pc-list li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
 
     /* ── Quote ── */
-    .quote { background: var(--bg); border-left: 4px solid var(--green-mid); border-radius: 0 10px 10px 0; padding: 20px 24px; }
-    .quote p { font-size: 16px; color: var(--text-2); line-height: 2.0; }
-    .quote-author { margin-top: 12px; font-size: 13px; font-weight: 700; color: var(--text-3); text-align: right; }
+    .quote { background: var(--bg); border-left: 4px solid var(--green-mid); border-radius: 0 10px 10px 0; padding: 22px 26px; }
+    .quote p { font-size: 18px; color: var(--text-2); line-height: 2.0; }
+    .quote-author { margin-top: 12px; font-size: 14px; font-weight: 700; color: var(--text-3); text-align: right; }
 
     /* ── Notice ── */
-    .notice { background: var(--green-pale); border: 1.5px solid rgba(36,149,90,.22); border-radius: 10px; padding: 18px 22px; font-size: 15px; color: var(--text-2); line-height: 1.9; }
+    .notice { background: var(--green-pale); border: 1.5px solid rgba(36,149,90,.22); border-radius: 10px; padding: 18px 22px; font-size: 17px; color: var(--text-2); line-height: 1.9; }
     .notice strong { color: var(--text); }
 
     /* ── FAQ ── */
     details { background: var(--white); border: 1.5px solid var(--border); border-radius: 10px; margin-bottom: 8px; overflow: hidden; transition: border-color .15s; }
     details[open] { border-color: var(--green); }
-    details summary { padding: 18px 22px; font-size: 16px; font-weight: 600; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; line-height: 1.5; }
+    details summary { padding: 18px 22px; font-size: 18px; font-weight: 600; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; line-height: 1.5; }
     details summary::-webkit-details-marker { display: none; }
     details summary::before { content: 'Q.'; color: var(--green); font-weight: 900; flex-shrink: 0; }
     details summary::after  { content: '+'; color: var(--text-3); font-size: 22px; font-weight: 300; flex-shrink: 0; line-height: 1; }
@@ -395,7 +395,7 @@
 <hr class="div">
 
 <!-- ━━━━ Why not solved ━━━━ -->
-<section class="section sec-dark">
+<section class="section sec-white">
   <div class="wrap-sm">
     <div class="section-head rv">
       <span class="section-label">なぜ今まで解決できなかったのか</span>
@@ -403,22 +403,22 @@
       <p class="section-desc">花屋向けのシステムは、いくつもあります。私たちも全部調べました。</p>
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:28px;" class="rv">
-      <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:24px;text-align:center;">
-        <div style="font-size:46px;font-weight:900;color:#6ee7a0;line-height:1;letter-spacing:-2px;">10<span style="font-size:18px;vertical-align:middle;font-weight:700;">社以上</span></div>
-        <div style="font-size:13px;color:rgba(255,255,255,.5);margin-top:8px;">の花屋向けシステムを調査</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px;" class="rv">
+      <div style="background:var(--green-pale);border:1.5px solid var(--green-light);border-radius:12px;padding:28px 24px;text-align:center;">
+        <div style="font-size:48px;font-weight:900;color:var(--green);line-height:1;letter-spacing:-2px;">10<span style="font-size:18px;vertical-align:middle;font-weight:700;">社以上</span></div>
+        <div style="font-size:15px;color:var(--text-3);margin-top:10px;font-weight:600;">の花屋向けシステムを調査</div>
       </div>
-      <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:24px;text-align:center;">
-        <div style="font-size:46px;font-weight:900;color:#6ee7a0;line-height:1;letter-spacing:-2px;">0<span style="font-size:18px;vertical-align:middle;font-weight:700;">社</span></div>
-        <div style="font-size:13px;color:rgba(255,255,255,.5);margin-top:8px;">LINEに対応していたもの</div>
+      <div style="background:var(--green-pale);border:1.5px solid var(--green-light);border-radius:12px;padding:28px 24px;text-align:center;">
+        <div style="font-size:48px;font-weight:900;color:var(--green);line-height:1;letter-spacing:-2px;">0<span style="font-size:18px;vertical-align:middle;font-weight:700;">社</span></div>
+        <div style="font-size:15px;color:var(--text-3);margin-top:10px;font-weight:600;">LINEに対応していたもの</div>
       </div>
     </div>
 
-    <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:24px 26px;font-size:16px;line-height:2.0;color:rgba(255,255,255,.78);" class="rv">
+    <div style="background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:26px 28px;font-size:17px;line-height:2.0;color:var(--text-2);" class="rv">
       <p>顧客管理・受注管理・請求書発行。どれもよくできています。</p>
-      <p>ただ、<strong style="color:#fff;">全て「電話・FAX・来店」が前提の設計で止まっていた。</strong></p>
+      <p>ただ、<strong style="color:var(--text);">全て「電話・FAX・来店」が前提の設計で止まっていた。</strong></p>
       <p>お客様はとっくにLINEに移行しているのに、システムの側がついていっていない。</p>
-      <p style="margin-top:.8em;"><strong style="color:#6ee7a0;">だから、どれだけ探しても見つからなかった。なかったんです、今まで。</strong></p>
+      <p style="margin-top:.8em;"><strong style="color:var(--green);">だから、どれだけ探しても見つからなかった。なかったんです、今まで。</strong></p>
     </div>
   </div>
 </section>
