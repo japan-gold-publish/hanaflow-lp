@@ -3,754 +3,676 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HanaFlow — LINEで注文を受けている花屋さんへ</title>
+  <title>HanaFlow — 花屋のLINE受注を、AIが台帳に入れる</title>
   <meta name="description" content="LINEで来た注文を、AIが受けて台帳に入れます。転記ゼロ。花屋向け受注管理ツール。無料ベータ5社限定。初期費用ゼロ。">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;900&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
 
     :root {
-      --green:        #1a7a45;
-      --green-mid:    #22a05a;
-      --green-dark:   #0f5230;
-      --green-light:  #e8f5ee;
-      --green-pale:   #f4fbf7;
-      --text:         #1a1a2e;
-      --text-sub:     #4a5568;
-      --text-muted:   #718096;
-      --border:       #e2e8f0;
-      --bg:           #f8fafb;
-      --white:        #ffffff;
-      --section-alt:  #f0f9f4;
+      --green:       #1f6e3c;
+      --green-mid:   #27955a;
+      --green-dark:  #0d4a28;
+      --green-light: #e8f5ee;
+      --green-pale:  #f3fbf6;
+      --text:        #111827;
+      --text-2:      #374151;
+      --text-3:      #6b7280;
+      --border:      #e5e7eb;
+      --bg:          #f9fafb;
+      --white:       #ffffff;
     }
 
     body {
-      font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
-      font-size: 17px;
+      font-family: 'Noto Sans JP', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+      font-size: 16px;
       color: var(--text);
       background: var(--white);
-      line-height: 1.9;
-      letter-spacing: 0.03em;
+      line-height: 1.75;
+      letter-spacing: 0.025em;
       -webkit-font-smoothing: antialiased;
     }
+
     a { color: inherit; text-decoration: none; }
     img { max-width: 100%; display: block; }
-    p + p { margin-top: 1.3em; }
 
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 0 28px;
+    .wrap    { max-width: 1120px; margin: 0 auto; padding: 0 40px; }
+    .wrap-sm { max-width: 760px;  margin: 0 auto; padding: 0 40px; }
+
+    /* ── ボタン ── */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 8px; border-radius: 8px; font-weight: 600;
+      letter-spacing: 0.02em; cursor: pointer; transition: all .18s;
+      white-space: nowrap; text-decoration: none;
     }
+    .btn-lg { padding: 14px 32px; font-size: 16px; }
+    .btn-md { padding: 11px 24px; font-size: 15px; }
+    .btn-primary { background: var(--green-mid); color: #fff; border: 2px solid var(--green-mid); }
+    .btn-primary:hover { background: var(--green); border-color: var(--green); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(31,110,60,.22); }
+    .btn-outline { background: transparent; color: var(--green); border: 2px solid var(--green); }
+    .btn-outline:hover { background: var(--green-pale); }
+    .btn-ghost { background: transparent; color: var(--text-2); border: 2px solid var(--border); }
+    .btn-ghost:hover { background: var(--bg); }
+    .btn-white { background: #fff; color: var(--green-dark); border: 2px solid #fff; }
+    .btn-white:hover { background: #f0fdf4; }
 
-    /* ━━ タイポグラフィ ━━ */
-    .eyebrow {
-      display: inline-block;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      color: var(--green);
-      text-transform: uppercase;
-      margin-bottom: 12px;
+    .link-arrow {
+      color: var(--green); font-size: 15px; font-weight: 600;
+      display: inline-flex; align-items: center; gap: 4px;
     }
+    .link-arrow::after { content: '→'; transition: transform .15s; }
+    .link-arrow:hover::after { transform: translateX(3px); }
 
-    .h1 {
-      font-size: clamp(28px, 5.5vw, 42px);
-      font-weight: 900;
-      line-height: 1.28;
-      letter-spacing: -0.02em;
-      color: var(--white);
-    }
-
-    .h2 {
-      font-size: clamp(22px, 4vw, 30px);
-      font-weight: 800;
-      line-height: 1.35;
-      letter-spacing: -0.01em;
-    }
-
-    .h3 {
-      font-size: clamp(17px, 2.5vw, 20px);
-      font-weight: 700;
-      line-height: 1.45;
-    }
-
-    .lead {
-      font-size: clamp(16px, 2.2vw, 18px);
-      color: var(--text-sub);
-      line-height: 1.95;
-    }
-
-    /* ━━ テキスト強調（シンプル） ━━ */
-    strong { font-weight: 700; }
-    .em-green { color: var(--green); font-weight: 700; }
-    .em-underline {
-      text-decoration: underline;
-      text-decoration-color: var(--green);
-      text-underline-offset: 4px;
-      text-decoration-thickness: 2px;
-      font-weight: 700;
-    }
-
-    /* ━━ セクション ━━ */
-    section { padding: 80px 0; }
-    section.tight { padding: 56px 0; }
-    .sec-white { background: var(--white); }
-    .sec-alt   { background: var(--section-alt); }
-    .sec-bg    { background: var(--bg); }
-    .sec-dark  {
-      background: var(--green-dark);
-      color: var(--white);
-    }
-    .sec-dark .lead { color: rgba(255,255,255,.72); }
-    .sec-dark .h2   { color: var(--white); }
-
-    .divider { border: none; border-top: 1px solid var(--border); }
-
-    /* ━━ ヘッダー ━━ */
-    .site-header {
+    /* ── Nav ── */
+    .nav {
       position: sticky; top: 0; z-index: 100;
-      background: rgba(255,255,255,.95);
+      background: rgba(255,255,255,.96);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
-      height: 60px;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 28px;
+      height: 64px; display: flex; align-items: center;
     }
-    .logo {
-      font-size: 1.2rem; font-weight: 900;
-      color: var(--green); letter-spacing: -0.02em;
+    .nav-inner {
+      max-width: 1120px; margin: 0 auto; padding: 0 40px;
+      width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 24px;
     }
-    .logo span { color: var(--text-muted); font-weight: 400; font-size: 0.85em; margin-left: 6px; }
-    .header-cta {
-      background: var(--green);
-      color: white;
-      padding: 9px 20px;
-      border-radius: 6px;
-      font-size: 14px;
-      font-weight: 700;
-      transition: background .15s;
-    }
-    .header-cta:hover { background: var(--green-mid); }
+    .nav-logo { font-size: 1.25rem; font-weight: 800; color: var(--green); letter-spacing: -0.02em; }
+    .nav-logo span { color: var(--text-3); font-weight: 400; font-size: 0.8em; margin-left: 8px; }
+    .nav-actions { display: flex; align-items: center; gap: 10px; }
 
-    /* ━━ Hero ━━ */
+    /* ── Hero ── */
     .hero {
       background: var(--green-dark);
-      padding: 88px 28px 80px;
-      position: relative;
-      overflow: hidden;
+      padding: 80px 40px 88px;
+      overflow: hidden; position: relative;
     }
-    .hero::after {
+    .hero::before {
       content: '';
       position: absolute; inset: 0;
-      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      background:
+        radial-gradient(ellipse 60% 80% at 80% 50%, rgba(39,149,90,.18) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 10% 80%, rgba(39,149,90,.10) 0%, transparent 60%);
       pointer-events: none;
     }
     .hero-inner {
-      max-width: 800px;
-      margin: 0 auto;
-      position: relative;
-      z-index: 1;
+      max-width: 1120px; margin: 0 auto; position: relative; z-index: 1;
+      display: grid; grid-template-columns: 1fr 420px; gap: 64px; align-items: center;
     }
-    .hero-tag {
+    .hero-badge {
       display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(255,255,255,.1);
-      border: 1px solid rgba(255,255,255,.2);
-      color: rgba(255,255,255,.9);
-      font-size: 13px; font-weight: 600;
-      padding: 6px 16px; border-radius: 100px;
-      margin-bottom: 28px; letter-spacing: 0.06em;
+      background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2);
+      color: rgba(255,255,255,.9); font-size: 13px; font-weight: 600;
+      padding: 5px 14px; border-radius: 100px; margin-bottom: 24px;
+      letter-spacing: 0.07em;
     }
-    .hero-tag::before {
-      content: '';
-      width: 7px; height: 7px;
-      background: #6ee7a0;
-      border-radius: 50%;
-      animation: pulse-dot 2s ease infinite;
+    .hero-badge::before {
+      content: ''; width: 7px; height: 7px; background: #6ee7a0;
+      border-radius: 50%; animation: blink 2s ease infinite; flex-shrink: 0;
     }
-    @keyframes pulse-dot {
-      0%,100% { opacity: 1; transform: scale(1); }
-      50%      { opacity: .4; transform: scale(.8); }
-    }
+    @keyframes blink { 0%,100%{opacity:1}50%{opacity:.3} }
 
-    .hero-scene {
-      background: rgba(255,255,255,.07);
-      border-left: 3px solid rgba(110,231,160,.5);
-      padding: 20px 24px;
-      margin-bottom: 32px;
-      font-size: 16px;
-      line-height: 2.1;
-      color: rgba(255,255,255,.8);
-      border-radius: 0 8px 8px 0;
+    .hero h1 {
+      font-size: clamp(28px, 4.2vw, 48px);
+      font-weight: 800; line-height: 1.22; letter-spacing: -0.02em;
+      color: #fff; margin-bottom: 20px;
     }
-
-    .hero .h1 { margin-bottom: 20px; }
-
     .hero-sub {
-      font-size: 17px;
-      color: rgba(255,255,255,.75);
-      line-height: 1.9;
-      margin-bottom: 36px;
+      font-size: clamp(15px, 1.8vw, 17px);
+      color: rgba(255,255,255,.72); line-height: 1.85; margin-bottom: 36px;
     }
+    .hero-ctas { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    .hero-cta-note { font-size: 13px; color: rgba(255,255,255,.45); margin-top: 12px; }
 
-    /* ━━ CTA ━━ */
-    .cta-block { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
-    .cta-block.center { align-items: center; text-align: center; }
-
-    .btn-primary {
-      display: inline-flex; align-items: center; justify-content: center;
-      background: var(--green-mid);
-      color: white;
-      padding: 15px 36px;
-      border-radius: 8px;
-      font-size: clamp(15px, 2.2vw, 17px);
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      box-shadow: 0 4px 16px rgba(34,160,90,.35);
-      transition: background .15s, box-shadow .15s, transform .1s;
-    }
-    .btn-primary:hover {
-      background: var(--green);
-      box-shadow: 0 6px 24px rgba(34,160,90,.45);
-      transform: translateY(-1px);
-    }
-    .btn-note {
-      font-size: 13px;
-      color: rgba(255,255,255,.55);
-    }
-    .btn-note.dark { color: var(--text-muted); }
-
-    /* ━━ ボックス ━━ */
-    .info-box {
-      background: var(--green-pale);
-      border: 1.5px solid var(--green-light);
-      border-radius: 10px;
-      padding: 22px 26px;
-      margin: 28px 0;
-    }
-    .info-box .info-label {
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      color: var(--green);
-      margin-bottom: 8px;
-      display: block;
-    }
-
-    .notice-box {
-      background: var(--white);
-      border: 1.5px solid var(--border);
-      border-radius: 10px;
-      padding: 20px 24px;
-      margin: 28px 0;
-      box-shadow: 0 2px 8px rgba(0,0,0,.04);
-    }
-
-    .dark-box {
-      background: rgba(255,255,255,.07);
-      border: 1px solid rgba(255,255,255,.15);
-      border-radius: 10px;
-      padding: 22px 26px;
-      margin: 28px 0;
-      font-size: 16px;
-      line-height: 2.0;
-      color: rgba(255,255,255,.8);
-    }
-    .dark-box strong { color: rgba(255,255,255,.95); }
-
-    .quote-box {
-      background: var(--bg);
-      border-left: 4px solid var(--green-mid);
-      padding: 20px 24px;
-      margin: 28px 0;
-      border-radius: 0 8px 8px 0;
-    }
-    .quote-box p { color: var(--text-sub); font-size: 16px; line-height: 2.0; }
-    .quote-author {
-      margin-top: 12px;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-align: right;
-    }
-
-    /* ━━ チェックリスト ━━ */
-    .check-list { list-style: none; display: grid; gap: 10px; margin: 24px 0; }
-    .check-list li {
-      display: flex; align-items: flex-start; gap: 12px;
-      font-size: 16px; line-height: 1.75;
-      padding: 14px 18px;
-      background: var(--white);
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
-    }
-    .check-list li::before {
-      content: '✓';
-      color: var(--green);
-      font-weight: 900;
-      font-size: 14px;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-
-    /* ━━ タイムライン（転記の正体） ━━ */
-    .timeline { margin: 28px 0; }
-    .tl-item {
-      display: grid;
-      grid-template-columns: 72px 1fr;
-      gap: 0;
-      position: relative;
-    }
-    .tl-item::before {
+    /* hero: mock */
+    .hero-visual { position: relative; }
+    .hero-visual::before {
       content: '';
-      position: absolute;
-      left: 35px; top: 44px; bottom: -2px;
-      width: 2px;
-      background: var(--border);
-    }
-    .tl-item:last-child::before { display: none; }
-    .tl-time {
-      padding: 14px 0 14px;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--text-muted);
-      letter-spacing: 0.05em;
-      line-height: 1;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-    }
-    .tl-dot {
-      width: 12px; height: 12px;
-      background: var(--border);
-      border-radius: 50%;
-      border: 2px solid var(--white);
-      outline: 2px solid var(--border);
-      flex-shrink: 0;
-      position: relative;
-      z-index: 1;
-    }
-    .tl-body {
-      padding: 12px 0 20px 16px;
-      font-size: 15px;
-      line-height: 1.8;
-      color: var(--text-sub);
-      border-bottom: 1px solid var(--border);
-    }
-    .tl-item:last-child .tl-body { border-bottom: none; }
-    .tl-body strong { color: var(--text); }
-    .tl-body .tl-tag {
-      display: inline-block;
-      background: #fef2f2;
-      color: #c53030;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 2px 9px;
-      border-radius: 100px;
-      margin-top: 6px;
-      letter-spacing: 0.06em;
-    }
-
-    /* ━━ ステップ ━━ */
-    .step-list { list-style: none; display: grid; gap: 0; }
-    .step-item {
-      display: grid;
-      grid-template-columns: 52px 1fr;
-      gap: 20px;
-      align-items: flex-start;
-      padding-bottom: 32px;
-      position: relative;
-    }
-    .step-item:last-child { padding-bottom: 0; }
-    .step-item::before {
-      content: '';
-      position: absolute;
-      left: 25px; top: 52px; bottom: 0;
-      width: 2px;
-      background: var(--green-light);
-    }
-    .step-item:last-child::before { display: none; }
-    .step-num {
-      width: 52px; height: 52px;
-      background: var(--green);
-      color: white;
-      font-weight: 900;
-      font-size: 18px;
-      display: flex; align-items: center; justify-content: center;
-      border-radius: 50%;
-      flex-shrink: 0;
-      position: relative; z-index: 1;
-    }
-    .step-body { padding-top: 12px; }
-    .step-body .h3 { margin-bottom: 6px; }
-    .step-body p { font-size: 15px; color: var(--text-sub); line-height: 1.85; }
-
-    /* ━━ 実績カウント ━━ */
-    .proof-row {
-      display: flex; flex-wrap: wrap; gap: 16px;
-      margin: 32px 0;
-    }
-    .proof-card {
-      flex: 1; min-width: 140px;
-      background: rgba(255,255,255,.1);
-      border: 1px solid rgba(255,255,255,.15);
-      border-radius: 10px;
-      padding: 20px 18px;
-      text-align: center;
-    }
-    .proof-card .pc-num  { font-size: 46px; font-weight: 900; color: #6ee7a0; line-height: 1; letter-spacing: -2px; }
-    .proof-card .pc-unit { font-size: 18px; font-weight: 700; color: #6ee7a0; }
-    .proof-card .pc-desc { font-size: 13px; color: rgba(255,255,255,.6); margin-top: 8px; line-height: 1.5; }
-
-    /* ━━ Before/After ━━ */
-    .ba-table { width: 100%; border-collapse: collapse; margin: 28px 0; }
-    .ba-table th, .ba-table td { padding: 13px 16px; border: 1px solid var(--border); vertical-align: top; font-size: 15px; line-height: 1.7; }
-    .ba-table thead th { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-align: center; background: var(--bg); }
-    .ba-table thead .th-scene { text-align: left; }
-    .ba-table thead .th-before { color: #c53030; }
-    .ba-table thead .th-after  { color: var(--green); }
-    .ba-table tbody td:first-child { font-weight: 600; font-size: 13px; color: var(--text-sub); background: var(--bg); width: 22%; }
-    .ba-table tbody .td-before { color: var(--text-sub); }
-    .ba-table tbody .td-after  { color: var(--green-dark); font-weight: 500; }
-
-    /* ━━ 比較テーブル ━━ */
-    .compare-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); box-shadow: 0 2px 12px rgba(0,0,0,.05); }
-    .compare-table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 520px; }
-    .compare-table th, .compare-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); text-align: center; }
-    .compare-table thead th { background: var(--text); color: white; font-weight: 700; font-size: 13px; }
-    .compare-table thead .th-hana { background: var(--green); color: white; }
-    .compare-table tbody tr:last-child td { border-bottom: none; }
-    .compare-table tbody tr:hover { background: var(--bg); }
-    .compare-table td:first-child { text-align: left; font-weight: 600; color: var(--text-sub); font-size: 13px; }
-    .compare-table .row-hl { background: var(--green-pale); }
-    .compare-table .row-hl td:first-child { color: var(--green); font-weight: 700; }
-    .ct-check { color: var(--green); font-weight: 700; }
-    .ct-cross { color: #cbd5e0; }
-
-    /* ━━ 保証バッジ ━━ */
-    .badge-row { display: flex; flex-wrap: wrap; gap: 12px; margin: 28px 0; }
-    .badge-item {
-      flex: 1; min-width: 130px;
-      background: var(--white);
-      border: 1.5px solid var(--green-light);
-      border-radius: 10px;
-      padding: 16px 14px;
-      text-align: center;
-    }
-    .badge-item .b-icon { font-size: 24px; margin-bottom: 7px; }
-    .badge-item h3 { font-size: 13px; font-weight: 700; color: var(--green-dark); line-height: 1.4; }
-    .badge-item p  { font-size: 12px; color: var(--text-muted); margin-top: 3px; line-height: 1.5; }
-
-    /* ━━ 料金 ━━ */
-    .pricing-row { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 32px; }
-    .price-card {
-      flex: 1; min-width: 200px;
-      background: var(--white);
-      border: 1.5px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 2px 10px rgba(0,0,0,.05);
-    }
-    .price-card.featured {
-      border-color: var(--green);
-      box-shadow: 0 4px 20px rgba(26,122,69,.15);
-    }
-    .price-card .pc-top {
-      padding: 18px 20px 14px;
-      border-bottom: 1px solid var(--border);
-    }
-    .price-card.featured .pc-top { background: var(--green-pale); }
-    .pc-plan { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; color: var(--text-muted); margin-bottom: 4px; }
-    .price-card.featured .pc-plan { color: var(--green); }
-    .pc-price-num { font-size: 34px; font-weight: 900; color: var(--text); line-height: 1; letter-spacing: -1px; }
-    .pc-price-unit { font-size: 13px; font-weight: 400; color: var(--text-muted); }
-    .pc-tag { display: inline-block; background: var(--green); color: white; font-size: 11px; font-weight: 700; padding: 2px 10px; border-radius: 100px; margin-top: 6px; }
-    .pc-desc { font-size: 13px; color: var(--text-sub); margin-top: 6px; line-height: 1.6; }
-    .price-card .pc-features { list-style: none; padding: 14px 20px 18px; }
-    .price-card .pc-features li { padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text-sub); display: flex; gap: 8px; align-items: flex-start; line-height: 1.55; }
-    .price-card .pc-features li:last-child { border-bottom: none; }
-    .price-card .pc-features li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
-
-    /* ━━ FAQ ━━ */
-    details { border: 1.5px solid var(--border); background: var(--white); border-radius: 8px; margin-bottom: 8px; overflow: hidden; transition: border-color .15s; }
-    details[open] { border-color: var(--green); }
-    details summary { padding: 16px 20px; font-weight: 600; cursor: pointer; font-size: 16px; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; line-height: 1.5; color: var(--text); }
-    details summary::-webkit-details-marker { display: none; }
-    details summary::before { content: "Q. "; color: var(--green); font-weight: 900; flex-shrink: 0; }
-    details summary::after  { content: "+"; color: var(--text-muted); font-size: 20px; font-weight: 300; flex-shrink: 0; }
-    details[open] summary::after { content: "−"; }
-    .faq-answer { padding: 14px 20px 20px; font-size: 15px; color: var(--text-sub); line-height: 2.0; border-top: 1px solid var(--border); }
-
-    /* ━━ Final CTA ━━ */
-    .final-cta {
-      background: var(--green-dark);
-      color: white;
-      text-align: center;
-      padding: 96px 28px;
-      position: relative;
-      overflow: hidden;
-    }
-    .final-cta::before {
-      content: '';
-      position: absolute;
-      top: -120px; right: -120px;
-      width: 400px; height: 400px;
-      background: radial-gradient(circle, rgba(255,255,255,.04) 0%, transparent 70%);
+      position: absolute; inset: -32px;
+      background: radial-gradient(ellipse, rgba(39,149,90,.2) 0%, transparent 70%);
       pointer-events: none;
     }
-    .final-cta .h2 { color: white; margin-bottom: 16px; position: relative; }
-    .final-cta .lead { color: rgba(255,255,255,.72); margin-bottom: 36px; position: relative; }
-    .final-cta .btn-primary { background: white; color: var(--green-dark); box-shadow: 0 4px 20px rgba(0,0,0,.2); }
-    .final-cta .btn-primary:hover { background: #f0fdf4; }
-    .final-cta .btn-note { color: rgba(255,255,255,.5); }
+    .mock-browser {
+      background: #1a2535; border-radius: 12px;
+      box-shadow: 0 32px 72px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.07);
+      overflow: hidden; position: relative; z-index: 1;
+    }
+    .mock-bar {
+      height: 40px; background: #242f40;
+      display: flex; align-items: center; gap: 8px; padding: 0 14px;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+    .mock-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .mock-dot:nth-child(1) { background: #ff5f57; }
+    .mock-dot:nth-child(2) { background: #ffbd2e; }
+    .mock-dot:nth-child(3) { background: #28ca41; }
+    .mock-url {
+      flex: 1; background: rgba(255,255,255,.07); border-radius: 4px;
+      height: 22px; margin-left: 8px;
+    }
+    .mock-content { padding: 16px; }
+    .mock-screen { border-radius: 6px; overflow: hidden; }
+    .mock-screen img { width: 100%; display: block; }
 
-    /* ━━ Footer ━━ */
-    footer { background: #1a2030; color: #718096; text-align: center; padding: 28px 20px; font-size: 12px; line-height: 1.8; }
+    /* mock placeholder (画像がない場合) */
+    .mock-placeholder {
+      background: linear-gradient(135deg, #1e3a2f 0%, #163024 100%);
+      padding: 20px 16px;
+      border-radius: 6px;
+    }
+    .mock-row { display: flex; gap: 8px; align-items: center; padding: 10px 12px; background: rgba(255,255,255,.05); border-radius: 6px; margin-bottom: 6px; }
+    .mock-row:last-child { margin-bottom: 0; }
+    .mock-dot-green { width: 8px; height: 8px; border-radius: 50%; background: #6ee7a0; flex-shrink: 0; }
+    .mock-dot-orange { width: 8px; height: 8px; border-radius: 50%; background: #fbbf24; flex-shrink: 0; }
+    .mock-text { height: 10px; border-radius: 3px; background: rgba(255,255,255,.15); }
+    .mock-text-sm { height: 8px; border-radius: 3px; background: rgba(255,255,255,.09); }
+    .mock-tag { padding: 2px 8px; border-radius: 100px; font-size: 10px; font-weight: 700; white-space: nowrap; }
+    .mock-tag-new { background: rgba(110,231,160,.2); color: #6ee7a0; }
+    .mock-tag-done { background: rgba(255,255,255,.08); color: rgba(255,255,255,.4); }
 
-    /* ━━ Scroll reveal ━━ */
-    .reveal { opacity: 0; transform: translateY(16px); transition: opacity .5s ease, transform .5s ease; }
-    .reveal.visible { opacity: 1; transform: none; }
-    .d1 { transition-delay: .1s; }
-    .d2 { transition-delay: .2s; }
-    .d3 { transition-delay: .3s; }
+    /* ── セクション共通 ── */
+    .section { padding: 88px 40px; }
+    .section.tight { padding: 64px 40px; }
+    .sec-white { background: var(--white); }
+    .sec-gray  { background: var(--bg); }
+    .sec-green { background: var(--green-pale); }
+    .sec-dark  { background: var(--green-dark); color: #fff; }
 
-    /* ━━ Mobile ━━ */
+    .section-label {
+      font-size: 12px; font-weight: 700; letter-spacing: 0.14em;
+      color: var(--green); text-transform: uppercase; display: block; margin-bottom: 12px;
+    }
+    .sec-dark .section-label { color: #6ee7a0; }
+
+    .section-title {
+      font-size: clamp(22px, 3.5vw, 34px); font-weight: 800;
+      line-height: 1.3; letter-spacing: -0.015em; margin-bottom: 16px;
+    }
+    .section-desc {
+      font-size: 16px; color: var(--text-2); line-height: 1.85; max-width: 560px;
+    }
+    .sec-dark .section-title { color: #fff; }
+    .sec-dark .section-desc  { color: rgba(255,255,255,.65); }
+    .sec-dark .section-desc.wide { max-width: 100%; }
+
+    .section-head { margin-bottom: 56px; }
+    .section-head.center { text-align: center; }
+    .section-head.center .section-desc { margin: 0 auto; }
+
+    /* ── Stats ── */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .stat-item { background: var(--white); padding: 32px 24px; text-align: center; }
+    .stat-num  { font-size: clamp(32px, 4vw, 48px); font-weight: 900; color: var(--green); line-height: 1; letter-spacing: -0.03em; display: block; }
+    .stat-unit { font-size: 16px; font-weight: 700; color: var(--green); }
+    .stat-label{ font-size: 13px; color: var(--text-3); margin-top: 8px; line-height: 1.6; display: block; }
+    .stats-note { text-align: center; font-size: 12px; color: var(--text-3); margin-top: 12px; }
+
+    /* ── Problem cards ── */
+    .problem-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .problem-card {
+      background: var(--white); border: 1.5px solid var(--border); border-radius: 12px;
+      padding: 24px; box-shadow: 0 1px 4px rgba(0,0,0,.05);
+    }
+    .problem-card .pc-icon { font-size: 24px; margin-bottom: 12px; }
+    .problem-card .pc-time { font-size: 11px; font-weight: 700; letter-spacing: .1em; color: var(--text-3); margin-bottom: 8px; display: block; }
+    .problem-card .pc-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; line-height: 1.4; }
+    .problem-card .pc-body { font-size: 14px; color: var(--text-2); line-height: 1.8; }
+
+    /* ── Steps ── */
+    .steps { display: grid; gap: 0; }
+    .step { display: grid; grid-template-columns: 64px 1fr; gap: 24px; align-items: flex-start; padding-bottom: 40px; position: relative; }
+    .step:last-child { padding-bottom: 0; }
+    .step::before { content: ''; position: absolute; left: 31px; top: 64px; bottom: 0; width: 2px; background: var(--border); }
+    .step:last-child::before { display: none; }
+    .step-num { width: 64px; height: 64px; border-radius: 50%; background: var(--green); color: #fff; font-weight: 900; font-size: 22px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; position: relative; z-index: 1; }
+    .step-body { padding-top: 16px; }
+    .step-body h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; line-height: 1.4; }
+    .step-body p  { font-size: 15px; color: var(--text-2); line-height: 1.85; }
+
+    /* ── Feature cards ── */
+    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .feature-card {
+      background: var(--white); border: 1.5px solid var(--border); border-radius: 12px;
+      padding: 28px 24px; box-shadow: 0 1px 4px rgba(0,0,0,.05);
+      transition: box-shadow .18s, border-color .18s;
+    }
+    .feature-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,.08); border-color: rgba(39,149,90,.3); }
+    .feature-card.star { border-color: var(--green); background: var(--green-pale); }
+    .fc-badge { display: inline-block; background: var(--green); color: #fff; font-size: 11px; font-weight: 700; padding: 2px 10px; border-radius: 100px; margin-bottom: 14px; letter-spacing: .06em; }
+    .fc-icon  { font-size: 28px; margin-bottom: 14px; }
+    .fc-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; line-height: 1.4; }
+    .fc-body  { font-size: 14px; color: var(--text-2); line-height: 1.8; }
+
+    /* ── Before/After ── */
+    .ba-table { width: 100%; border-collapse: collapse; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+    .ba-table th, .ba-table td { padding: 14px 18px; border-bottom: 1px solid var(--border); font-size: 14px; line-height: 1.7; vertical-align: top; }
+    .ba-table tbody tr:last-child td { border-bottom: none; }
+    .ba-table thead th { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-align: center; background: var(--bg); padding: 12px 18px; }
+    .ba-table thead .th-scene { text-align: left; }
+    .ba-table thead .th-b { color: #b91c1c; }
+    .ba-table thead .th-a { color: var(--green); }
+    .ba-table tbody td:first-child { font-weight: 600; font-size: 13px; color: var(--text-3); background: var(--bg); width: 20%; }
+    .ba-table tbody .td-b { color: var(--text-2); }
+    .ba-table tbody .td-a { color: var(--green); font-weight: 500; }
+
+    /* ── Compare ── */
+    .compare-outer { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.05); }
+    .compare-scroll { overflow-x: auto; }
+    .compare-table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 540px; }
+    .compare-table th, .compare-table td { padding: 13px 16px; border-bottom: 1px solid var(--border); text-align: center; }
+    .compare-table tbody tr:last-child td { border-bottom: none; }
+    .compare-table tbody tr:hover { background: var(--bg); }
+    .compare-table td:first-child { text-align: left; font-weight: 600; color: var(--text-3); font-size: 13px; }
+    .compare-table thead th { background: var(--text); color: #fff; font-weight: 700; font-size: 13px; }
+    .compare-table thead .th-hana { background: var(--green); }
+    .compare-table .row-hl { background: var(--green-pale); }
+    .compare-table .row-hl td:first-child { color: var(--green); font-weight: 700; }
+    .ct-ok { color: var(--green); font-weight: 700; }
+    .ct-no { color: #d1d5db; }
+
+    /* ── Guarantee ── */
+    .guarantee-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .guarantee-card {
+      background: var(--white); border: 1.5px solid var(--green-light);
+      border-radius: 12px; padding: 24px 18px; text-align: center;
+    }
+    .gc-icon  { font-size: 28px; margin-bottom: 10px; }
+    .gc-title { font-size: 14px; font-weight: 700; color: var(--green-dark); line-height: 1.4; margin-bottom: 6px; }
+    .gc-body  { font-size: 13px; color: var(--text-3); line-height: 1.6; }
+
+    /* ── Pricing ── */
+    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .pricing-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .pricing-card.featured { border-color: var(--green); box-shadow: 0 4px 24px rgba(31,110,60,.15); }
+    .pc-head { padding: 22px 24px 18px; border-bottom: 1px solid var(--border); }
+    .pricing-card.featured .pc-head { background: var(--green-pale); }
+    .pc-plan { font-size: 11px; font-weight: 700; letter-spacing: .14em; color: var(--text-3); margin-bottom: 6px; }
+    .pricing-card.featured .pc-plan { color: var(--green); }
+    .pc-price { font-size: 38px; font-weight: 900; color: var(--text); line-height: 1; letter-spacing: -0.03em; }
+    .pc-price span { font-size: 14px; font-weight: 400; color: var(--text-3); }
+    .pc-tag { display: inline-block; background: var(--green); color: #fff; font-size: 11px; font-weight: 700; padding: 2px 10px; border-radius: 100px; margin-top: 8px; }
+    .pc-desc { font-size: 13px; color: var(--text-2); margin-top: 8px; line-height: 1.6; }
+    .pc-features { list-style: none; padding: 18px 24px 22px; }
+    .pc-features li { padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--text-2); display: flex; gap: 8px; align-items: flex-start; line-height: 1.55; }
+    .pc-features li:last-child { border-bottom: none; }
+    .pc-features li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+
+    /* ── FAQ ── */
+    details { background: var(--white); border: 1.5px solid var(--border); border-radius: 10px; margin-bottom: 8px; overflow: hidden; transition: border-color .15s; }
+    details[open] { border-color: var(--green); }
+    details summary { padding: 18px 22px; font-size: 16px; font-weight: 600; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; line-height: 1.5; }
+    details summary::-webkit-details-marker { display: none; }
+    details summary::before { content: 'Q. '; color: var(--green); font-weight: 900; flex-shrink: 0; }
+    details summary::after  { content: '+'; color: var(--text-3); font-size: 22px; font-weight: 300; flex-shrink: 0; line-height: 1; }
+    details[open] summary::after { content: '−'; }
+    .faq-ans { padding: 4px 22px 20px; font-size: 15px; color: var(--text-2); line-height: 2.0; border-top: 1px solid var(--border); padding-top: 16px; }
+
+    /* ── Final CTA ── */
+    .final-cta {
+      background: var(--green-dark); color: #fff;
+      text-align: center; padding: 96px 40px;
+      position: relative; overflow: hidden;
+    }
+    .final-cta::before {
+      content: ''; position: absolute;
+      top: -100px; right: -100px;
+      width: 450px; height: 450px;
+      background: radial-gradient(circle, rgba(39,149,90,.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .final-cta .section-title { color: #fff; margin-bottom: 16px; }
+    .final-cta .section-desc  { color: rgba(255,255,255,.65); margin: 0 auto 40px; max-width: 480px; }
+    .final-cta .ctas { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+    .final-cta-note { font-size: 13px; color: rgba(255,255,255,.4); margin-top: 16px; }
+
+    /* ── Footer ── */
+    footer { background: #111827; color: #6b7280; text-align: center; padding: 28px 20px; font-size: 12px; line-height: 1.8; }
+
+    /* ── Notice box ── */
+    .notice { background: var(--green-pale); border: 1.5px solid rgba(39,149,90,.25); border-radius: 10px; padding: 18px 22px; font-size: 15px; color: var(--text-2); line-height: 1.9; }
+    .notice strong { color: var(--text); }
+
+    /* ── Quote ── */
+    .quote-wrap { background: var(--bg); border-left: 4px solid var(--green-mid); border-radius: 0 10px 10px 0; padding: 20px 24px; }
+    .quote-wrap p { font-size: 16px; color: var(--text-2); line-height: 2.0; }
+    .quote-author { margin-top: 12px; font-size: 13px; font-weight: 700; color: var(--text-3); text-align: right; }
+
+    /* ── Scroll reveal ── */
+    .rv { opacity: 0; transform: translateY(16px); transition: opacity .5s ease, transform .5s ease; }
+    .rv.on { opacity: 1; transform: none; }
+    .d1 { transition-delay: .08s; }
+    .d2 { transition-delay: .16s; }
+    .d3 { transition-delay: .24s; }
+
+    /* ── Divider ── */
+    hr.div { border: none; border-top: 1px solid var(--border); }
+
+    /* ━━━ Mobile ━━━ */
+    @media (max-width: 900px) {
+      .hero-inner { grid-template-columns: 1fr; gap: 48px; }
+      .hero-visual { max-width: 480px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .problem-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+      .guarantee-grid { grid-template-columns: repeat(2, 1fr); }
+      .pricing-grid { grid-template-columns: 1fr; }
+    }
     @media (max-width: 640px) {
-      body { font-size: 16px; }
-      section { padding: 56px 0; }
-      .hero { padding: 60px 20px 56px; }
-      .container { padding: 0 20px; }
-      .proof-card .pc-num { font-size: 36px; }
-      .pricing-row { flex-direction: column; }
-      .price-card { min-width: unset; }
-      .cta-block { align-items: stretch; }
-      .btn-primary { text-align: center; }
+      .wrap, .wrap-sm { padding: 0 20px; }
+      .section { padding: 60px 20px; }
+      .section.tight { padding: 48px 20px; }
+      .hero { padding: 56px 20px 64px; }
+      .nav-inner { padding: 0 20px; }
+      .final-cta { padding: 72px 20px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .step { grid-template-columns: 50px 1fr; gap: 16px; }
+      .step-num { width: 50px; height: 50px; font-size: 18px; }
+      .step::before { left: 24px; top: 50px; }
       .ba-table th, .ba-table td { padding: 10px 10px; font-size: 13px; }
     }
   </style>
 </head>
 <body>
 
-<!-- ヘッダー -->
-<header class="site-header">
-  <span class="logo">HanaFlow <span>花屋の受注管理</span></span>
-  <a href="https://forms.gle/MMvSghpeCheXirDs7" class="header-cta">無料で試す（残り5社）</a>
+<!-- ━━━━ Nav ━━━━ -->
+<header class="nav">
+  <div class="nav-inner">
+    <span class="nav-logo">HanaFlow <span>花屋の受注管理</span></span>
+    <div class="nav-actions">
+      <a href="#pricing" class="btn btn-md btn-ghost" style="display:none" id="nav-price">料金</a>
+      <a href="https://forms.gle/MMvSghpeCheXirDs7" class="btn btn-md btn-primary">無料ベータに申し込む</a>
+    </div>
+  </div>
 </header>
 
-<!-- ① Hero -->
+<!-- ━━━━ Hero ━━━━ -->
 <div class="hero">
   <div class="hero-inner">
-    <div class="hero-tag">LINEで注文を受けている花屋さんへ</div>
 
-    <div class="hero-scene reveal">
-      夜9時。閉店して、片付けをして、<br>
-      ようやく座ったところで、またLINEが鳴る。<br><br>
-      「明日、花束お願いできますか？」<br><br>
-      あなたはスマホを置かず、台帳を開く。
+    <div>
+      <div class="hero-badge">LINEで注文を受けている花屋さんへ</div>
+
+      <h1>花屋のLINE受注を、<br>AIが台帳に入れる。</h1>
+
+      <p class="hero-sub">
+        「明日、花束お願いできますか？」<br>
+        その注文、もう手で書かなくていい。<br>
+        AIがLINEで受けて、台帳に自動登録します。
+      </p>
+
+      <div class="hero-ctas">
+        <a href="https://forms.gle/MMvSghpeCheXirDs7" class="btn btn-lg btn-white">無料ベータに申し込む（残り5社）</a>
+        <a href="#how" class="btn btn-lg btn-outline" style="border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.85);">仕組みを見る</a>
+      </div>
+      <p class="hero-cta-note">初期費用0円 ／ クレカ登録なし ／ いつでも停止OK</p>
     </div>
 
-    <h1 class="h1 reveal">
-      そのLINE、<br>まだ手で書いていますか。
-    </h1>
-
-    <p class="hero-sub reveal" style="margin-top:20px;">
-      AIがLINEで注文を受けて、台帳に入れます。<br>
-      あなたは何もしなくていい。
-    </p>
-
-    <div class="cta-block reveal" style="margin-top:32px;">
-      <a href="https://forms.gle/MMvSghpeCheXirDs7" class="btn-primary">
-        転記ゼロを、無料で試す（残り5社）
-      </a>
-      <span class="btn-note">初期費用0円 ／ クレカ登録なし ／ いつでも停止OK</span>
+    <div class="hero-visual rv">
+      <div class="mock-browser">
+        <div class="mock-bar">
+          <div class="mock-dot"></div>
+          <div class="mock-dot"></div>
+          <div class="mock-dot"></div>
+          <div class="mock-url"></div>
+        </div>
+        <div class="mock-content">
+          <div class="mock-placeholder">
+            <div style="margin-bottom:12px;">
+              <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:.1em;margin-bottom:8px;">受注一覧 — 6月9日</div>
+              <div class="mock-row">
+                <div class="mock-dot-green"></div>
+                <div class="mock-text" style="width:28%;"></div>
+                <div class="mock-text-sm" style="width:20%;margin-left:auto;"></div>
+                <div class="mock-tag mock-tag-new">LINE受付</div>
+              </div>
+              <div class="mock-row">
+                <div class="mock-dot-green"></div>
+                <div class="mock-text" style="width:35%;"></div>
+                <div class="mock-text-sm" style="width:18%;margin-left:auto;"></div>
+                <div class="mock-tag mock-tag-new">LINE受付</div>
+              </div>
+              <div class="mock-row">
+                <div class="mock-dot-orange"></div>
+                <div class="mock-text" style="width:25%;"></div>
+                <div class="mock-text-sm" style="width:22%;margin-left:auto;"></div>
+                <div class="mock-tag mock-tag-done">準備中</div>
+              </div>
+              <div class="mock-row">
+                <div class="mock-dot-orange"></div>
+                <div class="mock-text" style="width:32%;"></div>
+                <div class="mock-text-sm" style="width:16%;margin-left:auto;"></div>
+                <div class="mock-tag mock-tag-done">準備中</div>
+              </div>
+              <div class="mock-row" style="opacity:.5;">
+                <div class="mock-dot" style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);flex-shrink:0;"></div>
+                <div class="mock-text" style="width:22%;opacity:.5;"></div>
+                <div class="mock-text-sm" style="width:20%;margin-left:auto;opacity:.5;"></div>
+                <div class="mock-tag" style="background:rgba(255,255,255,.06);color:rgba(255,255,255,.25);">完了</div>
+              </div>
+            </div>
+            <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.07);">
+              <div style="font-size:10px;color:rgba(255,255,255,.3);text-align:right;">夜11:42 — LINEから2件が自動登録されました</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+
   </div>
 </div>
 
-<!-- ② 共感 -->
-<section class="sec-white">
-  <div class="container">
-    <span class="eyebrow reveal">こんな場面、ありませんか</span>
-    <h2 class="h2 reveal" style="margin-bottom:24px;">LINEで受注している花屋だけが知っている、あの疲れ。</h2>
+<!-- ━━━━ Stats ━━━━ -->
+<section class="section tight sec-white">
+  <div class="wrap">
+    <div class="stats-grid rv">
+      <div class="stat-item">
+        <span class="stat-num">30<span class="stat-unit">分</span></span>
+        <span class="stat-label">毎日の転記時間が<br>ゼロになる（推計）</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">0<span class="stat-unit">円</span></span>
+        <span class="stat-label">初期費用<br>クレカ登録も不要</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">5<span class="stat-unit">社</span></span>
+        <span class="stat-label">限定ベータ募集中<br>埋まり次第終了</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">10<span class="stat-unit">社+</span></span>
+        <span class="stat-label">競合を調査して<br>唯一のLINE対応を確認</span>
+      </div>
+    </div>
+    <p class="stats-note">＊「30分」は花屋オーナーへのヒアリングに基づく推計値</p>
+  </div>
+</section>
 
-    <div class="quote-box reveal">
-      <p>「閉店後にLINEで注文が来て、台帳に書き写して、翌朝また電話で確認して…それを毎日やっていたら、何のために花屋をやっているのか分からなくなってきた。」</p>
+<hr class="div">
+
+<!-- ━━━━ Problem ━━━━ -->
+<section class="section sec-gray">
+  <div class="wrap">
+    <div class="section-head rv">
+      <span class="section-label">こんな場面、ありませんか</span>
+      <h2 class="section-title">LINEで受注している花屋だけが<br>知っている、あの疲れ。</h2>
+      <p class="section-desc">これは、私が実際に花屋オーナーから聞いた話です。</p>
+    </div>
+
+    <div class="quote-wrap rv" style="margin-bottom:40px;">
+      <p>「閉店後にLINEで注文が来て、台帳に書き写して、翌朝また電話で確認して……それを毎日やっていたら、何のために花屋をやっているのか分からなくなってきた。」</p>
       <p class="quote-author">— 独立系花屋 オーナー</p>
     </div>
 
-    <p class="reveal">もし以下のどれか一つでも当てはまるなら、このページを最後まで読んでください。</p>
-
-    <ul class="check-list reveal">
-      <li>LINEで来た注文を、手で台帳に書き写している</li>
-      <li>「去年と同じで」と言われるたびに、ファイルの山をひっくり返す</li>
-      <li>母の日の週は深夜まで転記が終わらない</li>
-      <li>スタッフが辞めたとき、常連の情報が一緒に消えた</li>
-      <li>「何かシステムを入れよう」と思いながら、まだ解決できていない</li>
-    </ul>
+    <div class="problem-grid">
+      <div class="problem-card rv">
+        <div class="pc-icon">🌙</div>
+        <span class="pc-time">夜9時・閉店後</span>
+        <div class="pc-title">LINEの転記が終わらない</div>
+        <div class="pc-body">片付けが終わってようやく座ったところでLINEが鳴る。注文を確認して台帳を出して書き写す。それが終わるころ、また次のLINEが来ている。</div>
+      </div>
+      <div class="problem-card rv d1">
+        <div class="pc-icon">🔍</div>
+        <span class="pc-time">電話口・「去年と同じで」</span>
+        <div class="pc-title">過去の注文が見つからない</div>
+        <div class="pc-body">「去年と同じ感じで」と来るたびにファイルの山をひっくり返す。「少々お待ちください」と言いながら探している自分が情けなくなる。</div>
+      </div>
+      <div class="problem-card rv d2">
+        <div class="pc-icon">🌹</div>
+        <span class="pc-time">母の日・繁忙期</span>
+        <div class="pc-title">深夜まで転記が終わらない</div>
+        <div class="pc-body">LINE・電話・来店が同時に来て、転記だけで深夜になる。「また来年も同じことをするのか」と思いながら今年も深夜1時に台帳を閉じる。</div>
+      </div>
+      <div class="problem-card rv d3">
+        <div class="pc-icon">👤</div>
+        <span class="pc-time">スタッフが辞めた日</span>
+        <div class="pc-title">常連の情報が消えた</div>
+        <div class="pc-body">あの子だけが知っていた常連の情報が、一緒に消えた。「前回はどんな花でしたか？」と聞かれるたびに申し訳ない気持ちになる。</div>
+      </div>
+    </div>
   </div>
 </section>
 
-<hr class="divider">
+<hr class="div">
 
-<!-- ③ 転記の正体 -->
-<section class="sec-bg">
-  <div class="container">
-    <span class="eyebrow reveal">問題の正体</span>
-    <h2 class="h2 reveal" style="margin-bottom:8px;">「ふつうの月曜日」を書き出してみた</h2>
-    <p class="lead reveal" style="margin-bottom:28px;">LINEで注文を受けている花屋の1日は、転記の連続です。</p>
+<!-- ━━━━ Why not solved ━━━━ -->
+<section class="section sec-dark">
+  <div class="wrap-sm">
+    <div class="section-head rv">
+      <span class="section-label">なぜ今まで解決できなかったのか</span>
+      <h2 class="section-title">あなたが悪いのでも、<br>探し方が悪いのでもありません。</h2>
+      <p class="section-desc wide">花屋向けのシステムは、いくつもあります。私たちも全部調べました。</p>
+    </div>
 
-    <div class="timeline reveal">
-      <div class="tl-item">
-        <div class="tl-time"><span class="tl-dot"></span>朝9時</div>
-        <div class="tl-body">LINEに「今日の14時に花束を…」<br><strong>→ 台帳に転記</strong><span class="tl-tag">転記</span></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px;" class="rv">
+      <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:24px;text-align:center;">
+        <div style="font-size:48px;font-weight:900;color:#6ee7a0;line-height:1;letter-spacing:-2px;">10<span style="font-size:20px;">社以上</span></div>
+        <div style="font-size:13px;color:rgba(255,255,255,.5);margin-top:8px;">の花屋向けシステムを調査</div>
       </div>
-      <div class="tl-item">
-        <div class="tl-time"><span class="tl-dot"></span>10時</div>
-        <div class="tl-body">電話で「明後日の婚礼で…」<br><strong>→ 台帳に転記</strong><span class="tl-tag">転記</span></div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-time"><span class="tl-dot"></span>11時</div>
-        <div class="tl-body">来店で「来週のお葬式に…」<br><strong>→ 台帳に転記</strong><span class="tl-tag">転記</span></div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-time"><span class="tl-dot"></span>昼</div>
-        <div class="tl-body">またLINEに「先日と同じで…」<br><strong>→ 過去注文を探して転記</strong><span class="tl-tag">転記</span></div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-time"><span class="tl-dot"></span>夜9時</div>
-        <div class="tl-body">閉店後に「明日お願いできますか？」<br><strong>→ また台帳に転記</strong><span class="tl-tag">転記</span></div>
+      <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:24px;text-align:center;">
+        <div style="font-size:48px;font-weight:900;color:#6ee7a0;line-height:1;letter-spacing:-2px;">0<span style="font-size:20px;">社</span></div>
+        <div style="font-size:13px;color:rgba(255,255,255,.5);margin-top:8px;">LINEに対応していたもの</div>
       </div>
     </div>
 
-    <p class="reveal">本業は花を作ることのはず。なのに気づけば、<span class="em-underline">毎日30分以上を転記に使っている</span>。年間180時間以上です。</p>
-  </div>
-</section>
-
-<hr class="divider">
-
-<!-- ④ なぜ解決できなかったか -->
-<section class="sec-dark">
-  <div class="container">
-    <span class="eyebrow reveal" style="color:rgba(110,231,160,.8);">なぜ今まで解決できなかったのか</span>
-    <h2 class="h2 reveal" style="margin-bottom:20px;">あなたが悪いのでも、探し方が悪いのでもありません。</h2>
-
-    <p class="lead reveal">花屋向けのシステムは、いくつもあります。私たちも全部調べました。</p>
-
-    <div class="proof-row reveal">
-      <div class="proof-card">
-        <span class="pc-num">10</span><span class="pc-unit">社以上</span>
-        <p class="pc-desc">の花屋向けシステムを調査</p>
-      </div>
-      <div class="proof-card">
-        <span class="pc-num">0</span><span class="pc-unit">社</span>
-        <p class="pc-desc">LINEに対応していたもの</p>
-      </div>
-    </div>
-
-    <div class="dark-box reveal">
+    <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:24px 26px;font-size:16px;line-height:2.0;color:rgba(255,255,255,.78);" class="rv">
       <p>顧客管理・受注管理・請求書発行。どれもよくできています。</p>
-      <p>ただ、<strong>全て「電話・FAX・来店」が前提の設計で止まっていた。</strong></p>
+      <p>ただ、<strong style="color:#fff;">全て「電話・FAX・来店」が前提の設計で止まっていた。</strong></p>
       <p>お客様はとっくにLINEに移行しているのに、システムの側がついていっていない。</p>
-      <p style="margin-top:1em;"><strong>だから、どれだけ探しても見つからなかった。なかったんです、今まで。</strong></p>
+      <p style="margin-top:1em;"><strong style="color:#6ee7a0;">だから、どれだけ探しても見つからなかった。なかったんです、今まで。</strong></p>
     </div>
   </div>
 </section>
 
-<hr class="divider">
+<hr class="div">
 
-<!-- ⑤ 解決策 -->
-<section class="sec-white">
-  <div class="container">
-    <span class="eyebrow reveal">解決策</span>
-    <h2 class="h2 reveal" style="margin-bottom:8px;">HanaFlow — LINEで来た注文をAIが受けて、台帳に入れるツール</h2>
-    <p class="lead reveal" style="margin-bottom:36px;">難しい設定は不要。LINE公式アカウントとつなぐだけ。あとはAIが全部やります。</p>
+<!-- ━━━━ How ━━━━ -->
+<section class="section sec-white" id="how">
+  <div class="wrap">
+    <div class="section-head rv">
+      <span class="section-label">どう動くのか</span>
+      <h2 class="section-title">LINE公式アカウントとつなぐだけ。<br>あとはAIが全部やります。</h2>
+      <p class="section-desc">難しい設定は必要ありません。</p>
+    </div>
 
-    <ul class="step-list reveal">
-      <li class="step-item">
-        <div class="step-num">1</div>
-        <div class="step-body">
-          <h3 class="h3">お客様がLINEで「注文したい」と送る</h3>
-          <p>今まで通りLINEで連絡するだけ。アプリのダウンロードも特別な操作も不要です。</p>
-        </div>
-      </li>
-      <li class="step-item">
-        <div class="step-num">2</div>
-        <div class="step-body">
-          <h3 class="h3">AIが4問で情報を集める</h3>
-          <p>予算・用途・納期・花の好みをボタン選択で確認。「花が分からない」も解決します。</p>
-        </div>
-      </li>
-      <li class="step-item">
-        <div class="step-num">3</div>
-        <div class="step-body">
-          <h3 class="h3">AIが花を提案・お客様が承認</h3>
-          <p>回答をもとにAIが提案文を自動生成。お客様が承認したら注文確定です。</p>
-        </div>
-      </li>
-      <li class="step-item">
-        <div class="step-num">4</div>
-        <div class="step-body">
-          <h3 class="h3"><span class="em-green">台帳に自動登録。あなたは何もしない。</span></h3>
-          <p>閉店後に来ても、深夜に来ても、あなたが寝ていても、台帳に注文が並びます。</p>
-        </div>
-      </li>
-    </ul>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;">
+      <ul class="steps rv">
+        <li class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h3>お客様がLINEで「注文したい」と送る</h3>
+            <p>今まで通りLINEで連絡するだけ。アプリのダウンロードも特別な操作も不要です。</p>
+          </div>
+        </li>
+        <li class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h3>AIが4問で情報を集める</h3>
+            <p>予算・用途・納期・花の好みをボタン選択で確認。お客様は選ぶだけ。「花が分からない」も解決します。</p>
+          </div>
+        </li>
+        <li class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h3>AIが花を提案・お客様が承認</h3>
+            <p>回答をもとにAIが提案文を自動生成。お客様が承認したら注文確定です。</p>
+          </div>
+        </li>
+        <li class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <h3 style="color:var(--green);">台帳に自動登録。あなたは何もしない。</h3>
+            <p>閉店後・深夜・あなたが寝ていても、台帳に注文が並びます。</p>
+          </div>
+        </li>
+      </ul>
 
-    <div class="cta-block center reveal" style="margin-top:40px;">
-      <a href="https://forms.gle/MMvSghpeCheXirDs7" class="btn-primary">転記ゼロを、無料で試す（残り5社）</a>
-      <span class="btn-note dark">初期費用0円 ／ クレカ登録なし</span>
+      <div class="rv d1">
+        <div class="features-grid" style="grid-template-columns:1fr;gap:14px;">
+          <div class="feature-card star">
+            <div class="fc-badge">このツールだけの機能</div>
+            <div class="fc-title">LINE注文をAIが自動で台帳登録</div>
+            <div class="fc-body">私たちが調べた限り、この機能を持つ花屋向けシステムは他にありません。</div>
+          </div>
+          <div class="feature-card">
+            <div class="fc-icon">📋</div>
+            <div class="fc-title">全注文が1画面・納品日で絞り込み</div>
+            <div class="fc-body">電話・LINE・来店どこで受けても同じ画面に並ぶ。「明日の配達、何件？」が3秒で分かる。</div>
+          </div>
+          <div class="feature-card">
+            <div class="fc-icon">👥</div>
+            <div class="fc-title">顧客履歴が名前で3秒で出る</div>
+            <div class="fc-body">常連の好み・過去の注文が残る。スタッフが辞めても情報は消えない。</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<hr class="divider">
+<hr class="div">
 
-<!-- ⑥ Before/After -->
-<section class="sec-bg">
-  <div class="container">
-    <span class="eyebrow reveal">導入後の変化</span>
-    <h2 class="h2 reveal" style="margin-bottom:8px;">「あの夜9時」が変わります。</h2>
-    <p class="lead reveal" style="margin-bottom:28px;">具体的に何が変わるか、場面ごとに整理しました。</p>
-
-    <div style="overflow-x:auto;" class="reveal">
+<!-- ━━━━ Before/After ━━━━ -->
+<section class="section sec-gray">
+  <div class="wrap">
+    <div class="section-head center rv">
+      <span class="section-label">導入後の変化</span>
+      <h2 class="section-title">「あの夜9時」が変わります。</h2>
+    </div>
+    <div style="overflow-x:auto;" class="rv">
       <table class="ba-table">
         <thead>
           <tr>
             <th class="th-scene">場面</th>
-            <th class="th-before">導入前</th>
-            <th class="th-after">導入後</th>
+            <th class="th-b">導入前</th>
+            <th class="th-a">導入後</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td>夜10時</td>
-            <td class="td-before">LINEを開いて台帳に転記している。終わらない。</td>
-            <td class="td-after">台帳はもう埋まっている。LINEは閉じていい。</td>
+            <td class="td-b">LINEを開いて台帳に転記。終わらない。</td>
+            <td class="td-a">台帳はもう埋まっている。LINEは閉じていい。</td>
           </tr>
           <tr>
             <td>電話口</td>
-            <td class="td-before">「去年と同じで」に3秒固まる。ファイルをひっくり返す。</td>
-            <td class="td-after">名前を入れると3秒で過去の注文が出る。</td>
+            <td class="td-b">「去年と同じで」に3秒固まる。ファイルをひっくり返す。</td>
+            <td class="td-a">名前を入れると3秒で過去の注文が出る。</td>
           </tr>
           <tr>
             <td>母の日前週</td>
-            <td class="td-before">深夜1時に台帳を閉じる。また来年も同じことをする。</td>
-            <td class="td-after">前日に翌日ぶんを確認するだけ。</td>
+            <td class="td-b">深夜1時に台帳を閉じる。また来年も同じことをする。</td>
+            <td class="td-a">前日に翌日ぶんを確認するだけ。</td>
           </tr>
           <tr>
             <td>スタッフ退職</td>
-            <td class="td-before">常連の情報が一緒に消えた。</td>
-            <td class="td-after">何も変わらない。</td>
+            <td class="td-b">常連の情報が一緒に消えた。</td>
+            <td class="td-a">何も変わらない。</td>
           </tr>
           <tr>
             <td>閉店後の注文</td>
-            <td class="td-before">翌朝まで気づかない。または深夜に返信する。</td>
-            <td class="td-after">AIが受けて台帳に入れる。翌朝確認するだけ。</td>
+            <td class="td-b">翌朝まで気づかない。または深夜に返信する。</td>
+            <td class="td-a">AIが受けて台帳に入れる。翌朝確認するだけ。</td>
           </tr>
         </tbody>
       </table>
@@ -758,175 +680,154 @@
   </div>
 </section>
 
-<hr class="divider">
+<hr class="div">
 
-<!-- ⑦ 比較 -->
-<section class="sec-white">
-  <div class="container">
-    <span class="eyebrow reveal">他ツールとの比較</span>
-    <h2 class="h2 reveal" style="margin-bottom:8px;">私たちが調べた限り、LINEに対応した花屋向けシステムはありませんでした。</h2>
-    <p class="lead reveal" style="margin-bottom:28px;">他のシステムが悪いわけではありません。ただ、LINEの注文を台帳に自動登録する機能は、どこにもなかった。</p>
-
-    <div class="compare-wrap reveal">
-      <table class="compare-table">
-        <thead>
-          <tr>
-            <th style="text-align:left;">比較項目</th>
-            <th class="th-hana">HanaFlow</th>
-            <th>イージーマネージャー</th>
-            <th>F-NEXT</th>
-            <th>Excel・紙</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="row-hl">
-            <td>LINEで注文受付〜台帳登録</td>
-            <td class="ct-check">✓ AI自動</td>
-            <td class="ct-cross">✗</td>
-            <td class="ct-cross">✗</td>
-            <td class="ct-cross">✗</td>
-          </tr>
-          <tr>
-            <td>初期費用</td>
-            <td class="ct-check">0円</td>
-            <td class="ct-check">0円</td>
-            <td class="ct-cross">要問合せ</td>
-            <td class="ct-check">0円</td>
-          </tr>
-          <tr>
-            <td>月額（最安）</td>
-            <td class="ct-check">ベータ：<strong>無料</strong><br><small style="color:#999">→ 正式版9,800円〜</small></td>
-            <td>10,000円〜</td>
-            <td>非公開</td>
-            <td>0円</td>
-          </tr>
-          <tr>
-            <td>スマホで受注登録</td>
-            <td class="ct-check">✓</td>
-            <td>△</td>
-            <td>△</td>
-            <td class="ct-cross">✗</td>
-          </tr>
-          <tr>
-            <td>顧客履歴の検索</td>
-            <td class="ct-check">✓</td>
-            <td class="ct-check">✓</td>
-            <td class="ct-check">✓</td>
-            <td class="ct-cross">✗</td>
-          </tr>
-          <tr>
-            <td>花屋の現場経験者が設計</td>
-            <td class="ct-check">✓</td>
-            <td class="ct-cross">✗</td>
-            <td class="ct-cross">✗</td>
-            <td>—</td>
-          </tr>
-        </tbody>
-      </table>
+<!-- ━━━━ Compare ━━━━ -->
+<section class="section sec-white">
+  <div class="wrap">
+    <div class="section-head rv">
+      <span class="section-label">他ツールとの比較</span>
+      <h2 class="section-title">私たちが調べた限り、LINEに対応した<br>花屋向けシステムはありませんでした。</h2>
+      <p class="section-desc">他のシステムが悪いわけではありません。ただ、LINEの注文を台帳に自動登録する機能は、どこにもなかった。</p>
     </div>
-    <p class="reveal" style="font-size:12px; color:var(--text-muted); margin-top:10px;">＊2026年6月時点の調査結果。各社の最新情報は公式サイトをご確認ください。</p>
+
+    <div class="compare-outer rv">
+      <div class="compare-scroll">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th style="text-align:left;">比較項目</th>
+              <th class="th-hana">HanaFlow</th>
+              <th>イージーマネージャー</th>
+              <th>F-NEXT</th>
+              <th>Excel・紙</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="row-hl">
+              <td>LINEで注文受付〜台帳登録</td>
+              <td class="ct-ok">✓ AI自動</td>
+              <td class="ct-no">✗</td>
+              <td class="ct-no">✗</td>
+              <td class="ct-no">✗</td>
+            </tr>
+            <tr>
+              <td>初期費用</td>
+              <td class="ct-ok">0円</td>
+              <td class="ct-ok">0円</td>
+              <td>要問合せ</td>
+              <td class="ct-ok">0円</td>
+            </tr>
+            <tr>
+              <td>月額（最安）</td>
+              <td class="ct-ok">ベータ：<strong>無料</strong> → 9,800円〜</td>
+              <td>10,000円〜</td>
+              <td>非公開</td>
+              <td>0円</td>
+            </tr>
+            <tr>
+              <td>スマホで受注登録</td>
+              <td class="ct-ok">✓</td>
+              <td>△ PC中心</td>
+              <td>△ PC中心</td>
+              <td class="ct-no">✗</td>
+            </tr>
+            <tr>
+              <td>顧客履歴の検索</td>
+              <td class="ct-ok">✓</td>
+              <td class="ct-ok">✓</td>
+              <td class="ct-ok">✓</td>
+              <td class="ct-no">✗</td>
+            </tr>
+            <tr>
+              <td>花屋の現場経験者が設計</td>
+              <td class="ct-ok">✓</td>
+              <td class="ct-no">✗</td>
+              <td class="ct-no">✗</td>
+              <td>—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <p class="rv" style="font-size:12px;color:var(--text-3);margin-top:10px;">＊2026年6月時点の調査結果。各社の最新情報は公式サイトをご確認ください。</p>
   </div>
 </section>
 
-<hr class="divider">
+<hr class="div">
 
-<!-- ⑧ なぜ作ったか -->
-<section class="sec-bg">
-  <div class="container">
-    <span class="eyebrow reveal">開発の背景</span>
-    <h2 class="h2 reveal" style="margin-bottom:24px;">転記しながら、何度「誰かがやってくれたら」と思ったか。</h2>
+<!-- ━━━━ Why made ━━━━ -->
+<section class="section sec-gray">
+  <div class="wrap-sm">
+    <div class="section-head rv">
+      <span class="section-label">開発の背景</span>
+      <h2 class="section-title">転記しながら、何度<br>「誰かがやってくれたら」と思ったか。</h2>
+    </div>
 
-    <div class="quote-box reveal">
+    <div class="quote-wrap rv">
       <p>私たちは花屋システムの会社ではありません。「花屋」「農業」「小売」「イベント運営」の現場で働いてきた人間が設計しています。</p>
       <p>既存のシステムを全部試しました。どれも、LINEのことは考えていなかった。どこで情報が消えるかを体で知っているから、作ることにしました。</p>
       <p class="quote-author">— HanaFlow 開発者</p>
     </div>
 
-    <div class="info-box reveal">
-      <span class="info-label">設計の方針</span>
-      <p style="font-size:16px; line-height:1.9;">「転記をなくす」「過去の注文を3秒で出す」この2つだけに絞っています。多機能で挫折させるより、<span class="em-underline">シンプルで毎日使えるほうがずっと価値がある</span>から。</p>
+    <div class="notice rv" style="margin-top:24px;">
+      <strong>設計の方針：</strong>「転記をなくす」「過去の注文を3秒で出す」この2つだけに絞っています。多機能で挫折させるより、シンプルで毎日使えるほうがずっと価値があるから。
     </div>
   </div>
 </section>
 
-<!-- ⑨ 保証 -->
-<section class="sec-white tight">
-  <div class="container">
-    <span class="eyebrow reveal">リスクについて</span>
-    <h2 class="h2 reveal" style="margin-bottom:8px;">損をする仕組みが、一切ありません。</h2>
-    <p class="lead reveal" style="margin-bottom:24px;">「合わなかったら」という不安に、先にお答えします。</p>
-
-    <div class="badge-row reveal">
-      <div class="badge-item">
-        <div class="b-icon">💰</div>
-        <h3>初期費用ゼロ</h3>
-        <p>導入にお金はかかりません</p>
+<!-- ━━━━ Guarantee ━━━━ -->
+<section class="section tight sec-green">
+  <div class="wrap">
+    <div class="section-head center rv">
+      <span class="section-label">リスクについて</span>
+      <h2 class="section-title">損をする仕組みが、一切ありません。</h2>
+    </div>
+    <div class="guarantee-grid rv">
+      <div class="guarantee-card">
+        <div class="gc-icon">💰</div>
+        <div class="gc-title">初期費用ゼロ</div>
+        <div class="gc-body">導入にお金はかかりません</div>
       </div>
-      <div class="badge-item">
-        <div class="b-icon">📅</div>
-        <h3>ベータ期間<br>月額ゼロ</h3>
-        <p>使っている間は無料です</p>
+      <div class="guarantee-card">
+        <div class="gc-icon">📅</div>
+        <div class="gc-title">ベータ期間<br>月額ゼロ</div>
+        <div class="gc-body">使っている間は無料です</div>
       </div>
-      <div class="badge-item">
-        <div class="b-icon">💳</div>
-        <h3>クレカ登録なし</h3>
-        <p>カード情報の入力は不要</p>
+      <div class="guarantee-card">
+        <div class="gc-icon">💳</div>
+        <div class="gc-title">クレカ登録なし</div>
+        <div class="gc-body">カード情報の入力は不要</div>
       </div>
-      <div class="badge-item">
-        <div class="b-icon">🚪</div>
-        <h3>いつでも停止</h3>
-        <p>違約金も縛りもなし</p>
+      <div class="guarantee-card">
+        <div class="gc-icon">🚪</div>
+        <div class="gc-title">いつでも停止</div>
+        <div class="gc-body">違約金も縛りもなし</div>
       </div>
     </div>
-
-    <div class="notice-box reveal">
-      <p style="font-size:15px; line-height:1.9; color:var(--text-sub);">ベータ終了後に正式版へ移る際は、<strong style="color:var(--text);">必ず事前にご案内します。</strong>自動課金は絶対にしません。合わなければ、そのまま停止するだけでいい。</p>
-    </div>
-  </div>
-</section>
-
-<hr class="divider">
-
-<!-- ⑩ ベータ枠 -->
-<section class="sec-dark">
-  <div class="container">
-    <span class="eyebrow reveal" style="color:rgba(110,231,160,.8);">残り5社限定</span>
-    <h2 class="h2 reveal" style="margin-bottom:20px;">今年の母の日、去年と同じにしますか。</h2>
-    <p class="lead reveal">ベータ参加は5社限定です。枠が埋まった時点で受付を停止します。</p>
-
-    <div class="dark-box reveal">
-      <p style="margin-bottom:12px; font-weight:700; color:rgba(255,255,255,.9);">ベータ参加で得られるもの</p>
-      <ul style="list-style:none; line-height:2.1; font-size:15px;">
-        <li style="padding:5px 0; border-bottom:1px solid rgba(255,255,255,.08);">✓ LINE注文AI自動登録 — 転記ゼロ</li>
-        <li style="padding:5px 0; border-bottom:1px solid rgba(255,255,255,.08);">✓ 受注一覧・顧客管理・納品日管理</li>
-        <li style="padding:5px 0; border-bottom:1px solid rgba(255,255,255,.08);">✓ 要望を直接開発者に伝えられる窓口</li>
-        <li style="padding:5px 0;">✓ 正式版での料金優遇</li>
-      </ul>
-    </div>
-
-    <div class="cta-block center reveal">
-      <a href="https://forms.gle/MMvSghpeCheXirDs7" class="btn-primary">転記ゼロを、無料で始める（残り5社）</a>
-      <span class="btn-note">申込後48時間以内にご連絡します</span>
+    <div class="notice rv" style="margin-top:24px;text-align:center;">
+      ベータ終了後に正式版へ移る際は、<strong>必ず事前にご案内します。</strong>自動課金は絶対にしません。
     </div>
   </div>
 </section>
 
-<hr class="divider">
+<hr class="div">
 
-<!-- ⑪ 料金 -->
-<section class="sec-white">
-  <div class="container">
-    <span class="eyebrow reveal">料金</span>
-    <h2 class="h2 reveal" style="margin-bottom:8px;">初期費用0円。使った月だけ払う。</h2>
-    <p class="lead reveal" style="margin-bottom:0;">ベータ期間は完全無料。LINE連携を含む全機能を試せます。</p>
-
-    <div class="pricing-row">
-      <div class="price-card featured reveal">
-        <div class="pc-top">
-          <p class="pc-plan">BETA</p>
-          <p class="pc-price-num">¥0<span class="pc-price-unit">/月</span></p>
-          <span class="pc-tag">5社限定・今だけ</span>
-          <p class="pc-desc">フィードバック提供にご協力ください</p>
+<!-- ━━━━ Pricing ━━━━ -->
+<section class="section sec-white" id="pricing">
+  <div class="wrap">
+    <div class="section-head center rv">
+      <span class="section-label">料金</span>
+      <h2 class="section-title">初期費用0円。使った月だけ払う。</h2>
+      <p class="section-desc">ベータ期間は完全無料。LINE連携を含む全機能を試せます。</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="pricing-card featured rv">
+        <div class="pc-head">
+          <div class="pc-plan">BETA</div>
+          <div class="pc-price">¥0<span>/月</span></div>
+          <div class="pc-tag">5社限定・今だけ</div>
+          <div class="pc-desc">フィードバック提供にご協力ください</div>
         </div>
         <ul class="pc-features">
           <li>LINE注文AI自動登録</li>
@@ -937,11 +838,11 @@
           <li>スマホ完全対応</li>
         </ul>
       </div>
-      <div class="price-card reveal d1">
-        <div class="pc-top">
-          <p class="pc-plan">START</p>
-          <p class="pc-price-num">¥9,800<span class="pc-price-unit">/月</span></p>
-          <p class="pc-desc" style="margin-top:12px;">受注・顧客・LINE台帳を1つにまとめたい店向け</p>
+      <div class="pricing-card rv d1">
+        <div class="pc-head">
+          <div class="pc-plan">START</div>
+          <div class="pc-price">¥9,800<span>/月</span></div>
+          <div class="pc-desc" style="margin-top:12px;">受注・顧客・LINE台帳を1つにまとめたい店向け</div>
         </div>
         <ul class="pc-features">
           <li>ベータ機能すべて</li>
@@ -949,11 +850,11 @@
           <li>機能リクエスト受付</li>
         </ul>
       </div>
-      <div class="price-card reveal d2">
-        <div class="pc-top">
-          <p class="pc-plan">PRO</p>
-          <p class="pc-price-num">¥14,800<span class="pc-price-unit">/月</span></p>
-          <p class="pc-desc" style="margin-top:12px;">配達管理・請求まで完結させたい店向け</p>
+      <div class="pricing-card rv d2">
+        <div class="pc-head">
+          <div class="pc-plan">PRO</div>
+          <div class="pc-price">¥14,800<span>/月</span></div>
+          <div class="pc-desc" style="margin-top:12px;">配達管理・請求まで完結させたい店向け</div>
         </div>
         <ul class="pc-features">
           <li>STARTの全機能</li>
@@ -963,59 +864,41 @@
         </ul>
       </div>
     </div>
-
-    <div class="notice-box reveal" style="margin-top:24px;">
-      <p style="font-size:14px; color:var(--text-sub); line-height:1.9;">すべてのプランで初期費用0円。いつでも解約可。契約期間の縛りはありません。ベータ→正式版の移行は必ず事前にご案内します。<strong style="color:var(--text);">自動課金はありません。</strong></p>
+    <div class="notice rv" style="margin-top:24px;">
+      すべてのプランで初期費用0円。いつでも解約可。契約期間の縛りはありません。ベータ→正式版の移行は必ず事前にご案内します。<strong>自動課金はありません。</strong>
     </div>
   </div>
 </section>
 
-<hr class="divider">
+<hr class="div">
 
-<!-- ⑫ FAQ -->
-<section class="sec-bg">
-  <div class="container">
-    <span class="eyebrow reveal">よくある質問</span>
-    <h2 class="h2 reveal" style="margin-bottom:28px;">導入前に気になること</h2>
-
+<!-- ━━━━ FAQ ━━━━ -->
+<section class="section sec-gray">
+  <div class="wrap-sm">
+    <div class="section-head center rv">
+      <span class="section-label">よくある質問</span>
+      <h2 class="section-title">導入前に気になること</h2>
+    </div>
     <div>
-      <details class="reveal">
-        <summary>LINEの注文だけに対応しているのですか？</summary>
-        <div class="faq-answer">現在、自動で台帳に入るのはLINEからの注文です。電話・来店からの注文はスマホから手動で入力できます。全ての注文が同じ台帳に集まるので「どこで受けたか」を気にせず管理できます。</div>
-      </details>
-      <details class="reveal">
-        <summary>LINEの注文はどうやって台帳に入るのですか？</summary>
-        <div class="faq-answer">HanaFlowとLINE公式アカウントをつなぐと、お客様からLINEに「注文したい」と来たときにAIが自動で応答します。AIが4問で情報を集め、花を提案。お客様が承認したら台帳に自動登録されます。あなたの手作業はゼロです。</div>
-      </details>
-      <details class="reveal">
-        <summary>LINE公式アカウントを持っていないのですが大丈夫ですか？</summary>
-        <div class="faq-answer">LINE公式アカウントの開設が必要です（無料）。開設方法はベータ参加後にご案内します。現在のLINE個人アカウントで受けている注文を公式アカウントに移す形になります。</div>
-      </details>
-      <details class="reveal">
-        <summary>PCが苦手でも使えますか？</summary>
-        <div class="faq-answer">スマホだけで完結するよう設計しています。アプリのダウンロードも不要です。ブラウザを開くだけで使えます。</div>
-      </details>
-      <details class="reveal">
-        <summary>ベータが終わったら自動で課金されますか？</summary>
-        <div class="faq-answer">されません。正式版へ移る際は必ず事前にご案内し、ご了承いただいてから移行します。クレカ登録も不要です。</div>
-      </details>
-      <details class="reveal">
-        <summary>合わなかったらすぐ止められますか？</summary>
-        <div class="faq-answer">はい。いつでも停止できます。違約金も縛りもありません。ベータ期間は月額も0円なので、損をする仕組みが一切ありません。</div>
-      </details>
+      <details class="rv"><summary>LINEの注文だけに対応しているのですか？</summary><div class="faq-ans">現在、自動で台帳に入るのはLINEからの注文です。電話・来店からの注文はスマホから手動で入力できます。全ての注文が同じ台帳に集まるので「どこで受けたか」を気にせず管理できます。</div></details>
+      <details class="rv"><summary>LINEの注文はどうやって台帳に入るのですか？</summary><div class="faq-ans">HanaFlowとLINE公式アカウントをつなぐと、お客様からLINEに「注文したい」と来たときにAIが自動で応答します。AIが4問で情報を集め、花を提案。お客様が承認したら台帳に自動登録されます。あなたの手作業はゼロです。</div></details>
+      <details class="rv"><summary>LINE公式アカウントを持っていないのですが大丈夫ですか？</summary><div class="faq-ans">LINE公式アカウントの開設が必要です（無料）。開設方法はベータ参加後にご案内します。現在のLINE個人アカウントで受けている注文を公式アカウントに移す形になります。</div></details>
+      <details class="rv"><summary>PCが苦手でも使えますか？</summary><div class="faq-ans">スマホだけで完結するよう設計しています。アプリのダウンロードも不要です。ブラウザを開くだけで使えます。</div></details>
+      <details class="rv"><summary>ベータが終わったら自動で課金されますか？</summary><div class="faq-ans">されません。正式版へ移る際は必ず事前にご案内し、ご了承いただいてから移行します。クレカ登録も不要です。</div></details>
+      <details class="rv"><summary>合わなかったらすぐ止められますか？</summary><div class="faq-ans">はい。いつでも停止できます。違約金も縛りもありません。ベータ期間は月額も0円なので、損をする仕組みが一切ありません。</div></details>
     </div>
   </div>
 </section>
 
-<!-- ⑬ Final CTA -->
+<!-- ━━━━ Final CTA ━━━━ -->
 <div class="final-cta">
-  <div class="container">
-    <h2 class="h2 reveal">転記に使っていた時間を、<br>好きなことに使ってください。</h2>
-    <p class="lead reveal">花が好きで、この仕事を続けている。それだけで十分です。<br>残り5社。今日申し込んだ人が、今年の母の日を変えられます。</p>
-    <div class="cta-block center reveal">
-      <a href="https://forms.gle/MMvSghpeCheXirDs7" class="btn-primary">転記ゼロを、無料で始める（残り5社）</a>
-      <span class="btn-note">初期費用0円 ／ クレカ登録なし ／ いつでも停止OK ／ 申込後48時間以内にご連絡</span>
+  <div class="wrap-sm">
+    <h2 class="section-title rv">転記に使っていた時間を、<br>好きなことに使ってください。</h2>
+    <p class="section-desc rv">花が好きで、この仕事を続けている。それだけで十分です。<br>残り5社。今日申し込んだ人が、今年の母の日を変えられます。</p>
+    <div class="ctas rv">
+      <a href="https://forms.gle/MMvSghpeCheXirDs7" class="btn btn-lg btn-white">無料ベータに申し込む（残り5社）</a>
     </div>
+    <p class="final-cta-note rv">初期費用0円 ／ クレカ登録なし ／ いつでも停止OK ／ 申込後48時間以内にご連絡</p>
   </div>
 </div>
 
@@ -1025,11 +908,9 @@
 
 <script>
   const obs = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
-    });
-  }, { threshold: 0.07, rootMargin: '0px 0px -24px 0px' });
-  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); obs.unobserve(e.target); } });
+  }, { threshold: 0.06, rootMargin: '0px 0px -20px 0px' });
+  document.querySelectorAll('.rv').forEach(el => obs.observe(el));
 </script>
 
 </body>
