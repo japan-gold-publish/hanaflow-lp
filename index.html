@@ -60,7 +60,7 @@
 
     /* ── Hero（白背景・2カラム） ── */
     .hero { background: var(--white); padding: 64px 40px 48px; }
-    .hero-inner { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: 1fr 360px; gap: 56px; align-items: start; }
+    .hero-inner { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: 1fr 260px; gap: 56px; align-items: start; }
     .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: var(--green-pale); border: 1px solid var(--green-light); color: var(--green); font-size: 13px; font-weight: 700; padding: 5px 14px; border-radius: 100px; margin-bottom: 24px; letter-spacing: 0.07em; }
     .hero h1 { font-size: clamp(32px, 4.2vw, 52px); font-weight: 800; line-height: 1.2; letter-spacing: -0.03em; color: var(--text); margin-bottom: 20px; }
     .hero-sub { font-size: 19px; color: var(--text-2); line-height: 1.9; margin-bottom: 36px; }
@@ -80,7 +80,7 @@
     .screen-body img { width: 100%; display: block; }
 
     /* trust badge */
-    .trust-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px 12px; padding: 18px 0; border-top: 1px solid var(--border); margin-top: 24px; }
+    .trust-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 12px; padding: 18px 0; border-top: 1px solid var(--border); margin-top: 24px; }
     .trust-item { display: flex; align-items: center; gap: 7px; font-size: 14px; color: var(--text-3); font-weight: 600; line-height: 1.5; }
     .trust-item::before { content: '✓'; color: var(--green); font-weight: 700; font-size: 13px; flex-shrink: 0; }
 
@@ -309,8 +309,7 @@
       <p class="hero-note rv">初期費用0円 ／ クレカ登録なし ／ いつでも停止OK</p>
 
       <div class="trust-row rv">
-        <span class="trust-item">現場経験者が設計</span>
-        <span class="trust-item">LINE Official API</span>
+        <span class="trust-item">LINE Official API 使用</span>
         <span class="trust-item">ベータ5社・丁寧サポート</span>
       </div>
     </div>
@@ -539,18 +538,18 @@
     <div class="cred-grid" style="margin-bottom:40px;">
       <div class="cred-card rv">
         <div class="cred-num">10<span class="cred-unit">社+</span></div>
-        <div class="cred-title">競合を全件調査</div>
+        <div class="cred-title">競合を全件調査してわかった</div>
         <div class="cred-body">「LINEに対応しているのか」を確認するため、花屋向けシステムを10社以上調べました。対応しているものは0社でした。</div>
       </div>
       <div class="cred-card rv d1">
-        <div class="cred-num" style="font-size:32px;line-height:1.3;">現場<br>経験</div>
-        <div class="cred-title">花屋・農業・小売・イベントの実務経験者が設計</div>
-        <div class="cred-body">「どこで情報が消えるか」を体で知っている人間が設計しています。机上の機能ではなく、実際に困った経験から作りました。</div>
-      </div>
-      <div class="cred-card rv d2">
         <div class="cred-num">5<span class="cred-unit">社</span></div>
         <div class="cred-title">ベータを5社に限定する理由</div>
         <div class="cred-body">数を増やすより、5社に集中して丁寧にサポートします。要望を直接開発に反映し、正式版で最も恩恵を受けられる店を選んでいます。</div>
+      </div>
+      <div class="cred-card rv d2">
+        <div class="cred-num" style="font-size:28px;line-height:1.4;">48<span class="cred-unit">時間</span></div>
+        <div class="cred-title">申込後48時間以内に返信</div>
+        <div class="cred-body">お申し込みいただいたら必ず48時間以内にご連絡します。ベータ期間中は開発者が直接対応します。</div>
       </div>
     </div>
 
@@ -561,78 +560,6 @@
   </div>
 </section>
 
-<hr class="div">
-
-<!-- ━━━━ Compare ━━━━ -->
-<section class="section sec-gray">
-  <div class="wrap">
-    <div class="section-head rv">
-      <span class="section-label">他ツールとの比較</span>
-      <h2 class="section-title">私たちが調べた限り、LINEに対応した<br>花屋向けシステムはありませんでした。</h2>
-      <p class="section-desc">他のシステムが悪いわけではありません。ただ、LINEの注文を台帳に自動登録する機能は、どこにもなかった。</p>
-    </div>
-    <div class="compare-wrap rv">
-      <div class="compare-scroll">
-        <table class="compare-table">
-          <thead>
-            <tr>
-              <th style="text-align:left;">比較項目</th>
-              <th class="th-hana">HanaFlow</th>
-              <th>イージーマネージャー</th>
-              <th>F-NEXT</th>
-              <th>Excel・紙</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="row-hl">
-              <td>LINEで注文受付〜台帳登録</td>
-              <td class="ct-ok">✓ AI自動</td>
-              <td class="ct-no">✗</td>
-              <td class="ct-no">✗</td>
-              <td class="ct-no">✗</td>
-            </tr>
-            <tr>
-              <td>初期費用</td>
-              <td class="ct-ok">0円</td>
-              <td class="ct-ok">0円</td>
-              <td>要問合せ</td>
-              <td class="ct-ok">0円</td>
-            </tr>
-            <tr>
-              <td>月額（最安）</td>
-              <td class="ct-ok">ベータ：<strong>無料</strong> → 9,800円〜</td>
-              <td>10,000円〜</td>
-              <td>非公開</td>
-              <td>0円</td>
-            </tr>
-            <tr>
-              <td>スマホで受注登録</td>
-              <td class="ct-ok">✓</td>
-              <td>△ PC中心</td>
-              <td>△ PC中心</td>
-              <td class="ct-no">✗</td>
-            </tr>
-            <tr>
-              <td>顧客履歴の検索</td>
-              <td class="ct-ok">✓</td>
-              <td class="ct-ok">✓</td>
-              <td class="ct-ok">✓</td>
-              <td class="ct-no">✗</td>
-            </tr>
-            <tr>
-              <td>花屋の現場経験者が設計</td>
-              <td class="ct-ok">✓</td>
-              <td class="ct-no">✗</td>
-              <td class="ct-no">✗</td>
-              <td>—</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <p class="rv" style="font-size:12px;color:var(--text-3);margin-top:10px;">＊2026年6月時点の調査結果。各社の最新情報は公式サイトをご確認ください。</p>
-  </div>
-</section>
 
 <!-- ━━━━ Guarantee ━━━━ -->
 <section class="section tight sec-pale">
